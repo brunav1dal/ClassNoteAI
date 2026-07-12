@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"/c/Users/Bruna/AppData/Local/Programs/Python/Python313/python.exe\" \"C:/Users/Bruna/AppData/Local/Temp/claude/c--Users-Bruna-Desktop-classnote-ai/941a7a19-6ce0-456f-8b3b-346674be1597/scratchpad/http_test2.py\")",
+      "PowerShell(Stop-Process -Id 32372 -Force)",
+      "Bash(cd \"c:/Users/Bruna/Desktop/classnote-ai\" && rm -f resultados/*7c5844fa54134ce99bfb5ea188bcc19b* resultados/*3aef33f05cab495cab0c377bf42e87eb* && ls resultados/ && echo \"OK - resultados limpo\")",
+      "Bash(node -e ' *)",
+      "Bash(node --check /tmp/index_script.js)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"ProcessId=15060\")",
+      "Bash(cd \"c:/Users/Bruna/Desktop/classnote-ai\" && rm -f resultados/*7ba7ee00b6834b129ca653593ca509e1* audio/aula_7ba7ee00b6834b129ca653593ca509e1.wav audio/upload_web_20260709_212*.mp4 && echo \"cleaned\" && ls resultados/ | grep 7ba7ee; ls audio/ | grep 7ba7ee)",
+      "Bash(\"/c/Users/Bruna/AppData/Local/Programs/Python/Python313/python.exe\" -c \"import whisper, os; print\\(os.path.dirname\\(whisper.__file__\\)\\)\")",
+      "Bash(grep -n \"tqdm\\\\|def transcribe\" \"C:/Users/Bruna/AppData/Local/Programs/Python/Python313/Lib/site-packages/whisper/transcribe.py\" | head -40)",
+      "Read(//c/Users/Bruna/AppData/Local/Programs/Python/Python313/Lib/site-packages/whisper/**)",
+      "Bash(sed -n '250,300p' \"C:/Users/Bruna/AppData/Local/Programs/Python/Python313/Lib/site-packages/whisper/transcribe.py\")",
+      "Bash(/c/Users/Bruna/AppData/Local/Programs/Python/Python313/python.exe -c ' *)",
+      "Bash(rm -f resultados/*7b7a16d4f700466b860577d779569759*)",
+      "Bash(CLASSNOTE_WEB_PORT=8904 \"/c/Users/Bruna/AppData/Local/Programs/Python/Python313/python.exe\" -u src/web_api.py)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\Bruna\\Desktop\\classnote-ai\\resultados"
+    ]
+  }
+}

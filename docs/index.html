@@ -1,0 +1,1161 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClassNote AI</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --green: #059669;
+      --purple: #7c3aed;
+      --orange: #f97316;
+      --rose: #e11d48;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --soft: #f9fafb;
+      --soft-blue: #eff6ff;
+      --shadow: 0 10px 24px rgba(15, 23, 42, .06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #ffffff;
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, .96);
+      backdrop-filter: blur(10px);
+    }
+
+    .header-inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 14px 0;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .brand p,
+    p {
+      margin: 4px 0 0;
+      color: var(--muted);
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .header-tools {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .calendar-pill {
+      padding: 9px 12px;
+      border: 1px solid #ddd6fe;
+      border-radius: 999px;
+      background: #f5f3ff;
+      color: var(--purple);
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .status-pill {
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #ffffff;
+      font-weight: 800;
+      text-align: center;
+      white-space: nowrap;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, .28);
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 3px solid #bfdbfe;
+      border-top-color: var(--blue);
+      display: none;
+      animation: spin .8s linear infinite;
+    }
+
+    .spinner.active {
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .complete-message {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      background: #f0fdf4;
+      color: #047857;
+      font-weight: 800;
+    }
+
+    .complete-message.visible {
+      display: block;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 34px;
+    }
+
+    h2,
+    h3 {
+      margin-top: 0;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin-bottom: 8px;
+      font-size: 1.25rem;
+    }
+
+    .panel,
+    .content {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .panel {
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: #374151;
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    input,
+    select,
+    button {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 9px 12px;
+      color: var(--text);
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 800;
+      transition: background .15s ease, border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+
+    button:hover {
+      background: #f3f4f6;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, .08);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: .55;
+      box-shadow: none;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .primary {
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border-color: var(--blue);
+      color: #ffffff;
+    }
+
+    .primary:hover {
+      background: var(--blue-dark);
+      border-color: var(--blue-dark);
+    }
+
+    .secondary {
+      background: #ffffff;
+      color: var(--blue);
+      border-color: #bfdbfe;
+    }
+
+    .pdf-button {
+      width: auto;
+      min-width: 150px;
+      background: #fff7ed;
+      border-color: #fed7aa;
+      color: #c2410c;
+    }
+
+    .success {
+      background: var(--green);
+      border-color: var(--green);
+      color: #ffffff;
+    }
+
+    .progress-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      margin: 16px 0 8px;
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    .bar {
+      height: 14px;
+      overflow: hidden;
+      border: 1px solid #dbeafe;
+      border-radius: 999px;
+      background: var(--soft-blue);
+    }
+
+    .bar span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue), var(--purple), var(--orange));
+      transition: width .25s ease;
+    }
+
+    .tab-cards {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0 16px;
+    }
+
+    .tab-card {
+      min-height: 112px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+      text-align: left;
+      display: grid;
+      align-content: start;
+      gap: 6px;
+    }
+
+    .tab-card strong {
+      display: block;
+      font-size: .98rem;
+      color: var(--text);
+    }
+
+    .tab-card span {
+      color: var(--muted);
+      font-weight: 500;
+      font-size: .86rem;
+      line-height: 1.35;
+    }
+
+    .tab-card.active {
+      border-color: #bfdbfe;
+      background: linear-gradient(180deg, #eff6ff, #ffffff);
+      box-shadow: 0 8px 22px rgba(37, 99, 235, .12);
+    }
+
+    .material-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .ia-aviso {
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      background: #fffbeb;
+      color: #92400e;
+    }
+
+    .ia-aviso strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .ia-aviso p {
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .material-grid,
+    .flashcard-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .material-card {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, .05);
+    }
+
+    .material-card h3 {
+      margin: 0 0 8px;
+      color: var(--blue-dark);
+      font-size: 1rem;
+    }
+
+    .material-card p {
+      margin: 0;
+      white-space: pre-wrap;
+      color: #374151;
+      line-height: 1.6;
+    }
+
+    .material-card:nth-child(3n + 1) {
+      border-top: 4px solid var(--blue);
+    }
+
+    .material-card:nth-child(3n + 2) {
+      border-top: 4px solid var(--purple);
+    }
+
+    .material-card:nth-child(3n + 3) {
+      border-top: 4px solid var(--orange);
+    }
+
+    .flashcard {
+      perspective: 1200px;
+      min-height: 140px;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 140px;
+      transition: transform .5s;
+      transform-style: preserve-3d;
+    }
+
+    .flashcard.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-face {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      align-content: start;
+      gap: 6px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, .05);
+      backface-visibility: hidden;
+    }
+
+    .flashcard-face strong {
+      color: var(--blue-dark);
+      font-size: .82rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .flashcard-front {
+      background: linear-gradient(180deg, #fff7ed, #ffffff);
+    }
+
+    .flashcard-back {
+      background: linear-gradient(180deg, #eff6ff, #ffffff);
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-hint {
+      margin-top: auto;
+      color: var(--muted);
+      font-size: .78rem;
+      font-style: italic;
+    }
+
+    .content {
+      min-height: 420px;
+      padding: 22px;
+    }
+
+    .placeholder {
+      min-height: 220px;
+      margin-top: 16px;
+      display: grid;
+      place-items: center;
+      border: 1px dashed #d1d5db;
+      border-radius: 8px;
+      background: var(--soft);
+      color: var(--muted);
+      text-align: center;
+      padding: 20px;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .meta div {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--soft);
+    }
+
+    .meta strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    pre {
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--soft);
+      color: #1f2937;
+      font: .92rem/1.55 "Consolas", "Segoe UI", monospace;
+    }
+
+    .result-image {
+      width: 100%;
+      max-height: 520px;
+      object-fit: contain;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--soft);
+    }
+
+    @media (max-width: 980px) {
+      .header-inner {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .actions {
+        display: grid;
+      }
+
+      .control-grid,
+      .tab-cards,
+      .meta,
+      .material-grid,
+      .flashcard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <h1>ClassNote AI</h1>
+        <p>Processamento de voz aplicado a aulas gravadas.</p>
+      </div>
+      <div class="header-status">
+        <span id="loadingSpinner" class="spinner" aria-label="Carregando"></span>
+        <div id="statusText" class="status-pill">Status: aguardando áudio</div>
+      </div>
+      <div class="header-tools">
+        <div id="calendarText" class="calendar-pill">Hoje</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel" aria-label="Controles de processamento">
+      <div class="control-grid">
+        <label>
+          Arquivo
+          <input id="fileInput" type="file" accept="audio/*,video/*">
+        </label>
+        <label>
+          Whisper
+          <select id="whisperSelect">
+            <option value="tiny">Rápido - tiny</option>
+            <option value="base">Equilibrado - base</option>
+            <option value="small">Mais preciso - small</option>
+          </select>
+        </label>
+        <label>
+          IA
+          <select id="aiSelect">
+            <option value="auto">Automático</option>
+            <option value="openai">OpenAI GPT</option>
+            <option value="ollama">Ollama local</option>
+            <option value="local">Local sem IA externa</option>
+          </select>
+        </label>
+        <label>
+          Duração
+          <select id="durationSelect">
+            <option value="">Completa</option>
+            <option value="180">Teste 3 min</option>
+            <option value="300">Teste 5 min</option>
+            <option value="600">Teste 10 min</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="processButton" class="primary" type="button">Processar aula</button>
+        <button id="latestButton" class="secondary" type="button">Carregar resultados salvos</button>
+      </div>
+
+      <div class="progress-row">
+        <span>Progresso do processamento</span>
+        <span id="progressText">0%</span>
+      </div>
+      <div class="bar" aria-label="Progresso"><span id="progressBar"></span></div>
+      <div id="completeMessage" class="complete-message">
+        Material gerado com sucesso. Os resultados já estão disponíveis nas abas abaixo.
+      </div>
+    </section>
+
+    <section class="tab-cards" aria-label="Abas de resultados">
+      <button class="tab-card active" type="button" data-tab="signal">
+        <strong>Sinal</strong>
+        <span>Dados do áudio: duração, amostras, canais e taxa de amostragem.</span>
+      </button>
+      <button class="tab-card" type="button" data-tab="fft">
+        <strong>FFT</strong>
+        <span>Visualização do espectro de frequência da voz analisada.</span>
+      </button>
+      <button class="tab-card" type="button" data-tab="keywords">
+        <strong>Termos-chave</strong>
+        <span>Termos relevantes após filtro de conectores e vícios de fala.</span>
+      </button>
+      <button class="tab-card" type="button" data-tab="transcription">
+        <strong>Transcrição</strong>
+        <span>Texto reconhecido pelo Whisper e corrigido para leitura.</span>
+      </button>
+      <button class="tab-card" type="button" data-tab="material">
+        <strong>Material</strong>
+        <span>Resumo didático, conceitos, perguntas e flashcards para estudar.</span>
+      </button>
+    </section>
+
+    <article id="content" class="content">
+      <h2>Sinal do áudio</h2>
+      <p>Selecione um arquivo para ver os detalhes básicos aqui.</p>
+      <div class="placeholder">Nenhum áudio selecionado.</div>
+    </article>
+  </main>
+
+  <script>
+    const fileInput = document.querySelector("#fileInput");
+    const whisperSelect = document.querySelector("#whisperSelect");
+    const aiSelect = document.querySelector("#aiSelect");
+    const durationSelect = document.querySelector("#durationSelect");
+    const processButton = document.querySelector("#processButton");
+    const latestButton = document.querySelector("#latestButton");
+    const statusText = document.querySelector("#statusText");
+    const calendarText = document.querySelector("#calendarText");
+    const loadingSpinner = document.querySelector("#loadingSpinner");
+    const completeMessage = document.querySelector("#completeMessage");
+    const progressText = document.querySelector("#progressText");
+    const progressBar = document.querySelector("#progressBar");
+    const content = document.querySelector("#content");
+    const tabButtons = document.querySelectorAll("[data-tab]");
+
+    let selectedFile = null;
+    let currentTab = "signal";
+    let lastResult = null;
+
+    function apiBase() {
+      if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
+        return "";
+      }
+      return "http://127.0.0.1:8000";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes) return "0 KB";
+      const units = ["B", "KB", "MB", "GB"];
+      const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+      return `${(bytes / Math.pow(1024, index)).toFixed(1)} ${units[index]}`;
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    function updateCalendar() {
+      const now = new Date();
+      calendarText.textContent = now.toLocaleString("pt-BR", {
+        weekday: "short",
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function setLoading(isLoading) {
+      loadingSpinner.classList.toggle("active", isLoading);
+    }
+
+    function showCompleteMessage(message) {
+      completeMessage.textContent = message;
+      completeMessage.classList.add("visible");
+    }
+
+    function hideCompleteMessage() {
+      completeMessage.classList.remove("visible");
+    }
+
+    let lastRealProgress = 0;
+    let displayedProgress = 0;
+    let creepInterval = null;
+
+    function resetProgress() {
+      lastRealProgress = 0;
+      displayedProgress = 0;
+      progressBar.style.width = "0%";
+      progressText.textContent = "0%";
+    }
+
+    function renderDisplayedProgress() {
+      progressBar.style.width = `${displayedProgress}%`;
+      progressText.textContent = `${Math.round(displayedProgress)}%`;
+    }
+
+    function setProgress(value, label) {
+      lastRealProgress = value;
+      // A barra nunca deve recuar visualmente: se o "creep" já tinha avançado
+      // além do valor real recém-chegado, mantemos a posição mais alta em vez
+      // de saltar pra trás (o que antes parecia a barra "oscilando").
+      displayedProgress = Math.max(value, displayedProgress);
+      renderDisplayedProgress();
+      statusText.textContent = `Status: ${label}`;
+    }
+
+    function startProgressCreep() {
+      stopProgressCreep();
+      creepInterval = setInterval(() => {
+        const teto = Math.min(lastRealProgress + 6, 98);
+        if (displayedProgress >= teto - 0.15) return;
+        displayedProgress += (teto - displayedProgress) * 0.1;
+        renderDisplayedProgress();
+      }, 400);
+    }
+
+    function stopProgressCreep() {
+      if (creepInterval) {
+        clearInterval(creepInterval);
+        creepInterval = null;
+      }
+    }
+
+    const MATERIAL_MARKER = "MATERIAL GERADO PELA IA";
+
+    function extrairInfoProvedor(text) {
+      const raw = String(text || "");
+      const iaMatch = raw.match(/IA utilizada:\s*(.+)/i);
+      const motivoMatch = raw.match(/Motivo técnico:\s*([\s\S]*?)(?:\n=+|\n\n|$)/i);
+      const provedor = iaMatch ? iaMatch[1].trim() : "";
+      const usouIaExterna = Boolean(provedor) && !/gerador local/i.test(provedor);
+      return {
+        provedor,
+        usouIaExterna,
+        motivo: motivoMatch ? motivoMatch[1].trim() : ""
+      };
+    }
+
+    function conteudoGeradoPelaIa(text) {
+      const raw = String(text || "");
+      const indice = raw.toUpperCase().indexOf(MATERIAL_MARKER);
+      if (indice === -1) return raw.trim();
+
+      const depoisDoMarcador = raw.slice(indice + MATERIAL_MARKER.length);
+      return depoisDoMarcador.replace(/^\s*=+\s*/, "").trim();
+    }
+
+    function parseMaterial(text) {
+      const headings = [
+        "RESUMO DA AULA",
+        "CONCEITOS IMPORTANTES",
+        "EXPLICAÇÃO DIDÁTICA",
+        "FÓRMULAS E EQUAÇÕES MENCIONADAS",
+        "EXEMPLOS PRÁTICOS",
+        "PONTOS DE ATENÇÃO",
+        "DICAS PARA PROVA",
+        "FLASHCARDS",
+        "PERGUNTAS DE REVISÃO",
+        "RESUMO FINAL",
+        "TEXTO CORRIGIDO",
+        "INTERPRETAÇÃO DA MENSAGEM",
+        "OBSERVAÇÕES ÚTEIS"
+      ];
+      const conteudo = conteudoGeradoPelaIa(text);
+      const lines = conteudo.split(/\r?\n/);
+      const sections = [];
+      let current = null;
+
+      for (const rawLine of lines) {
+        const line = rawLine.trim();
+        const upper = line.toUpperCase();
+        if (headings.includes(upper)) {
+          if (current) sections.push(current);
+          current = {title: upper, body: []};
+          continue;
+        }
+        if (current && line) current.body.push(line);
+      }
+      if (current) sections.push(current);
+
+      if (!sections.length && conteudo) {
+        sections.push({title: "MATERIAL GERADO", body: [conteudo]});
+      }
+      return sections;
+    }
+
+    function flashcardsFromSection(section) {
+      if (!section) return [];
+      const body = section.body.join("\n");
+      const chunks = body
+        .split(/\n(?=\d+\.|-|\?)/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      const brutos = chunks.length ? chunks : section.body;
+
+      return brutos.map((chunk) => {
+        const partes = chunk.split(/resposta\s*:/i);
+        if (partes.length > 1) {
+          return {
+            pergunta: partes[0].trim(),
+            resposta: partes.slice(1).join("Resposta:").trim()
+          };
+        }
+        return {pergunta: chunk.trim(), resposta: "Sem resposta identificada para este flashcard."};
+      });
+    }
+
+    function renderMaterialCards(materialText) {
+      const sections = parseMaterial(materialText);
+      const flashcardSection = sections.find((section) => section.title === "FLASHCARDS");
+      const regularSections = sections.filter((section) => section.title !== "FLASHCARDS");
+      const infoProvedor = extrairInfoProvedor(materialText);
+
+      const avisoLocal = infoProvedor.usouIaExterna ? "" : `
+        <div class="ia-aviso">
+          <strong>⚠ Este material foi gerado localmente, sem uma IA externa (GPT/Ollama).</strong>
+          <p>O texto abaixo é um modelo genérico reaproveitando trechos da transcrição, não uma
+          análise real do conteúdo da aula. ${infoProvedor.motivo ? `Motivo: ${escapeHtml(infoProvedor.motivo)}.` : ""}
+          Confira sua chave da OpenAI (ou o Ollama local) e reprocesse para ter um resumo, pontos
+          de atenção e flashcards realmente elaborados a partir da aula.</p>
+        </div>
+      `;
+
+      const sectionCards = regularSections.map((section) => `
+        <section class="material-card">
+          <h3>${escapeHtml(section.title)}</h3>
+          <p>${escapeHtml(section.body.join("\n\n") || "Sem conteúdo nesta seção.")}</p>
+        </section>
+      `).join("");
+
+      const flashcards = flashcardsFromSection(flashcardSection).map((card, index) => `
+        <div class="flashcard" data-flashcard tabindex="0" role="button" aria-pressed="false">
+          <div class="flashcard-inner">
+            <div class="flashcard-face flashcard-front">
+              <strong>Pergunta ${index + 1}</strong>
+              <p>${escapeHtml(card.pergunta)}</p>
+              <span class="flashcard-hint">Clique para ver a resposta</span>
+            </div>
+            <div class="flashcard-face flashcard-back">
+              <strong>Resposta</strong>
+              <p>${escapeHtml(card.resposta)}</p>
+              <span class="flashcard-hint">Clique para ver a pergunta</span>
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      return `
+        <div class="material-toolbar">
+          <div>
+            <h2>Material de estudo</h2>
+            <p>Visualização dinâmica em cards, resumo e flashcards.</p>
+          </div>
+          <button class="pdf-button" type="button" onclick="createMaterialPdf()">Criar PDF</button>
+        </div>
+        ${avisoLocal}
+        <div class="material-grid">${sectionCards || "<div class='placeholder'>Sem seções identificadas.</div>"}</div>
+        ${flashcards ? `<h2 style="margin-top: 22px;">Flashcards</h2><div class="flashcard-grid">${flashcards}</div>` : ""}
+      `;
+    }
+
+    function toggleFlashcard(card) {
+      const flipped = card.classList.toggle("flipped");
+      card.setAttribute("aria-pressed", flipped ? "true" : "false");
+    }
+
+    content.addEventListener("click", (event) => {
+      const card = event.target.closest("[data-flashcard]");
+      if (card) toggleFlashcard(card);
+    });
+
+    content.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const card = event.target.closest("[data-flashcard]");
+      if (!card) return;
+      event.preventDefault();
+      toggleFlashcard(card);
+    });
+
+    function createMaterialPdf() {
+      const material = lastResult?.material || "";
+      if (!material.trim()) {
+        alert("Nenhum material de estudo disponível para gerar PDF.");
+        return;
+      }
+
+      const win = window.open("", "_blank");
+      win.document.write(`
+        <!doctype html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="utf-8">
+          <title>ClassNote AI - Material de Estudo</title>
+          <style>
+            body { font-family: Arial, sans-serif; color: #111827; padding: 32px; line-height: 1.5; }
+            h1 { margin-top: 0; }
+            pre { white-space: pre-wrap; font-family: Arial, sans-serif; }
+          </style>
+        </head>
+        <body>
+          <h1>ClassNote AI - Material de Estudo</h1>
+          <p>Gerado em ${escapeHtml(new Date().toLocaleString("pt-BR"))}</p>
+          <pre>${escapeHtml(material)}</pre>
+        </body>
+        </html>
+      `);
+      win.document.close();
+      win.focus();
+      win.print();
+    }
+
+    async function waitForJob(jobId) {
+      startProgressCreep();
+      try {
+        while (true) {
+          const response = await fetch(`${apiBase()}/api/status?jobId=${encodeURIComponent(jobId)}`, {
+            cache: "no-store"
+          });
+          const data = await response.json();
+
+          if (!response.ok || !data.ok) {
+            throw new Error(data.error || "Não foi possível consultar o status do processamento.");
+          }
+
+          const job = data.job;
+          setProgress(job.progress ?? 0, job.status || "processando");
+          if (job.result) {
+            lastResult = job.result;
+            renderTab();
+          }
+
+          if (job.done) {
+            if (!job.ok) {
+              throw new Error(job.error || "O backend informou erro no processamento.");
+            }
+            return job.result;
+          }
+
+          await sleep(700);
+        }
+      } finally {
+        stopProgressCreep();
+      }
+    }
+
+    async function loadLatestResult() {
+      setProgress(96, "carregando resultados salvos");
+      const response = await fetch(`${apiBase()}/api/latest`, {cache: "no-store"});
+      const data = await response.json();
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "Não foi possível carregar resultados salvos.");
+      }
+      lastResult = data.result;
+      setProgress(100, "resultados carregados");
+      currentTab = "signal";
+      tabButtons.forEach((item) => item.classList.toggle("active", item.dataset.tab === "signal"));
+      renderTab();
+      return lastResult;
+    }
+
+    function renderTab() {
+      const fileName = selectedFile ? selectedFile.name : "Nenhum áudio selecionado";
+      const fileSize = selectedFile ? formatBytes(selectedFile.size) : "-";
+      const fileType = selectedFile && selectedFile.type ? selectedFile.type : "-";
+
+      if (!lastResult) {
+        content.innerHTML = `
+          <h2>${currentTab === "signal" ? "Sinal do áudio" : "Resultado"}</h2>
+          <p>Escolha um arquivo e clique em Processar aula.</p>
+          <div class="meta">
+            <div><strong>Arquivo</strong>${escapeHtml(fileName)}</div>
+            <div><strong>Tamanho</strong>${escapeHtml(fileSize)}</div>
+            <div><strong>Tipo</strong>${escapeHtml(fileType)}</div>
+          </div>
+          <div class="placeholder">Aguardando processamento pela API local.</div>
+        `;
+        return;
+      }
+
+      if (currentTab === "signal") {
+        const audio = lastResult.audio || {};
+        content.innerHTML = `
+          <h2>Sinal do áudio</h2>
+          <p>Esta aba mostra os metadados básicos do sinal usado no processamento de voz.</p>
+          <div class="meta">
+            <div><strong>Arquivo</strong>${escapeHtml(audio.arquivoOriginal)}</div>
+            <div><strong>Duração</strong>${escapeHtml(audio.duracao)} segundos</div>
+            <div><strong>Amostragem</strong>${escapeHtml(audio.taxaAmostragem)} Hz</div>
+            <div><strong>Canais</strong>${escapeHtml(audio.canais)}</div>
+            <div><strong>Amostras</strong>${escapeHtml(audio.amostras)}</div>
+            <div><strong>Whisper</strong>${escapeHtml(whisperSelect.value)}</div>
+          </div>
+        `;
+        return;
+      }
+
+      if (currentTab === "fft") {
+        content.innerHTML = `
+          <h2>FFT</h2>
+          <p>A FFT mostra como a energia do sinal de voz se distribui nas frequências.</p>
+          ${lastResult.fftImagem ? `<img class="result-image" src="${lastResult.fftImagem}" alt="Gráfico FFT">` : `<div class="placeholder">Sem gráfico FFT.</div>`}
+        `;
+        return;
+      }
+
+      if (currentTab === "keywords") {
+        content.innerHTML = `
+          <h2>Termos-chave</h2>
+          <p>Esta aba destaca termos com maior potencial de representar o conteúdo da aula.</p>
+          ${lastResult.termosImagem ? `<img class="result-image" src="${lastResult.termosImagem}" alt="Gráfico de termos-chave">` : ""}
+          <pre>${escapeHtml(lastResult.termos || "Sem termos-chave.")}</pre>
+        `;
+        return;
+      }
+
+      if (currentTab === "transcription") {
+        content.innerHTML = `
+          <h2>Transcrição</h2>
+          <p>Texto reconhecido a partir do áudio e preparado para leitura.</p>
+          <pre>${escapeHtml(lastResult.transcricao || "Sem transcrição.")}</pre>
+        `;
+        return;
+      }
+
+      if (currentTab === "material") {
+        content.innerHTML = renderMaterialCards(lastResult.material || "");
+      }
+    }
+
+    fileInput.addEventListener("change", () => {
+      selectedFile = fileInput.files[0] || null;
+      lastResult = null;
+      hideCompleteMessage();
+      resetProgress();
+      statusText.textContent = `Status: ${selectedFile ? "arquivo selecionado" : "aguardando áudio"}`;
+      renderTab();
+    });
+
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        tabButtons.forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        currentTab = button.dataset.tab;
+        renderTab();
+      });
+    });
+
+    processButton.addEventListener("click", async () => {
+      if (!selectedFile) {
+        resetProgress();
+        statusText.textContent = "Status: selecione um áudio primeiro";
+        renderTab();
+        return;
+      }
+
+      processButton.disabled = true;
+      latestButton.disabled = true;
+      lastResult = null;
+      hideCompleteMessage();
+      setLoading(true);
+      resetProgress();
+      setProgress(3, "enviando arquivo para a API");
+
+      try {
+        const contentBase64 = await fileToBase64(selectedFile);
+        const response = await fetch(`${apiBase()}/api/process`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            filename: selectedFile.name,
+            contentBase64,
+            whisperModel: whisperSelect.value,
+            aiProvider: aiSelect.value,
+            maxSeconds: durationSelect.value ? Number(durationSelect.value) : null
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.ok) {
+          throw new Error(data.error || "Falha no processamento.");
+        }
+
+        if (data.jobId) {
+          lastResult = await waitForJob(data.jobId);
+        } else if (data.result) {
+          lastResult = data.result;
+        } else if (data.audio || data.material || data.transcricao || data.termos) {
+          lastResult = data;
+        } else {
+          lastResult = await loadLatestResult();
+        }
+
+        setProgress(100, "processamento concluído");
+        showCompleteMessage("Material gerado com sucesso. Você já pode navegar pelas abas ou criar o PDF do material de estudo.");
+        currentTab = "signal";
+        tabButtons.forEach((item) => item.classList.toggle("active", item.dataset.tab === "signal"));
+        renderTab();
+      } catch (error) {
+        setProgress(0, "erro no processamento");
+        content.innerHTML = `
+          <h2>Erro ao processar</h2>
+          <p>Verifique se a API local está rodando em http://127.0.0.1:8000.</p>
+          <pre>${escapeHtml(error.message)}</pre>
+        `;
+      } finally {
+        setLoading(false);
+        processButton.disabled = false;
+        latestButton.disabled = false;
+      }
+    });
+
+    latestButton.addEventListener("click", async () => {
+      latestButton.disabled = true;
+      processButton.disabled = true;
+      hideCompleteMessage();
+      setLoading(true);
+      try {
+        await loadLatestResult();
+        showCompleteMessage("Resultados salvos carregados com sucesso.");
+      } catch (error) {
+        setProgress(0, "erro ao carregar salvos");
+        content.innerHTML = `
+          <h2>Erro ao carregar resultados</h2>
+          <p>Verifique se a API local está rodando e se existem arquivos na pasta resultados.</p>
+          <pre>${escapeHtml(error.message)}</pre>
+        `;
+      } finally {
+        setLoading(false);
+        latestButton.disabled = false;
+        processButton.disabled = false;
+      }
+    });
+
+    updateCalendar();
+    setInterval(updateCalendar, 30000);
+    renderTab();
+  </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+Fase 0 - MVP
+Áudio
+ ↓
+FFT
+ ↓
+Transcrição
+ ↓
+Palavras-chave
+ ↓
+Resumo
+
+
+Fase 4 — Plotar o sinal
+O que você explica no relatório
+
+O áudio é representado por uma sequência discreta de amostras obtidas a partir da digitalização do sinal de voz.
+
+Fase 5 — Aplicar FFT
+Você acabou de calcular:
+
+X[k]=∑
+n=0
+N−1
+	​
+
+x[n]e
+−j2πkn/N
+
+Essa é a DFT calculada pela FFT.
+
+PS C:\Users\Bruna\Desktop\classnote-ai> python -u "c:\Users\Bruna\Desktop\classnote-ai\src\fft_audio.py"
+[ -36488.             +0.j          -48474.72793182 +48655.48273989j
+  125180.82650066-108877.54938701j -170728.01329641 +45907.13638951j
+  261033.64130908 +67109.12129492j -287550.80861923-117580.46670051j
+  245575.03775802+149532.78726888j -227325.59659611-149651.83440328j
+  211344.76320112 +86251.42545828j -165559.09714947 -30763.40724613j]
+PS C:\Users\Bruna\Desktop\classnote-ai> 
+-----------------------------------
+Fase 6 — Mostrar o espectro

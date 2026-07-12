@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Stop-Process -Id 12968 -Force)",
+      "Bash(netstat -ano)",
+      "Bash(/c/Users/Bruna/AppData/Local/Programs/Python/Python313/python.exe -c ' *)"
+    ]
+  }
+}
