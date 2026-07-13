@@ -1,107 +1,93 @@
 from datetime import datetime
-import os
 from pathlib import Path
+import time
 
-from ia_utils import chamar_openai, chamar_ollama
+from ia_utils import MODELO_GROQ, chamar_groq
 from resultados_utils import arquivo_mais_recente
 from texto_utils import extrair_corpo_transcricao, limitar_texto
-
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 RESULTADOS_DIR = BASE_DIR / "resultados"
 
-PROMPT_CORRECAO = """Você corrige transcrições de aulas em português brasileiro geradas por reconhecimento de fala automático.
+# Prompt estruturado para correção previsível pela Groq.
+PROMPT_CORRECAO = """Você é um revisor de texto especializado em ajustar erros fonéticos de transcrições automáticas (áudio para texto) em português brasileiro.
 
-Regras obrigatórias:
-- Corrija apenas erros óbvios de ortografia, pontuação e palavras trocadas por outras parecidas foneticamente.
-- Não adicione nenhuma palavra, frase, exemplo, dado ou informação que não esteja no texto original.
-- Não resuma, não parafraseie e não reescreva frases inteiras.
-- Se não tiver certeza do que uma palavra deveria ser, mantenha a palavra original.
-- Devolva somente o texto corrigido, sem comentários, títulos ou explicações.
+Regras estritas:
+1. Corrija apenas erros óbvios de ortografia, pontuação e palavras trocadas por sons parecidos.
+2. Nunca adicione, mude o sentido, resuma ou parafraseie o texto. Mantenha as repetições e o estilo falado do aluno/professor.
+3. Se não tiver certeza de um termo técnico ou palavra, NÃO mude.
+4. Responda APENAS com o texto corrigido. Sem introduções, sem notas, sem títulos.
 
-Texto:
-{texto}
-"""
+Exemplo:
+Texto original: "a gente vai focar nos gráfico de pitom pra criar o deste borde"
+Texto corrigido: "A gente vai focar nos gráficos de Python pra criar o dashboard."
+
+Texto original para corrigir:
+"{texto}"
+Texto corrigido:"""
 
 
 def ajustar_pontuacao_basica(texto):
+    if not texto:
+        return ""
+    texto = texto.strip()
     if texto:
         texto = texto[0].upper() + texto[1:]
-
     if texto and texto[-1] not in ".!?":
         texto += "."
-
     return texto
 
 
-def _mensagens_correcao(prompt):
-    return [
-        {
-            "role": "system",
-            "content": (
-                "Você corrige erros de reconhecimento de fala sem alterar o conteúdo, "
-                "o sentido ou adicionar qualquer informação nova."
-            ),
-        },
-        {"role": "user", "content": prompt},
-    ]
-
-
-def corrigir_com_ia(texto, ia_provider=None):
-    """Retorna (texto_corrigido, metodo) em caso de sucesso, ou (None, motivo)
-    quando a IA não pôde ser usada - o motivo real (chave ausente, chave
-    inválida, erro de rede etc.) é sempre propagado, nunca substituído por uma
-    mensagem genérica."""
-    provedor = (ia_provider or os.environ.get("CLASSNOTE_IA_PROVIDER", "auto")).strip().lower()
-
-    if provedor == "local":
-        return None, "modo local selecionado"
+def corrigir_com_ia(texto, ia_provider="groq", medidor=None):
+    """Corrige a transcrição em blocos usando a Groq."""
     if not texto:
         return None, "transcrição vazia"
 
-    prompt = PROMPT_CORRECAO.format(texto=limitar_texto(texto))
+    # Limitamos o texto caso ele passe do tamanho máximo configurado no sistema
+    texto_limitado = limitar_texto(texto)
 
-    if provedor == "openai":
-        try:
-            return chamar_openai(_mensagens_correcao(prompt), temperature=0.1)
-        except Exception as erro:
-            return None, f"OpenAI indisponível: {erro}"
+    # Dividir o texto em blocos menores (ex: por quebras de linha ou blocos de ~1000 caracteres)
+    # Blocos menores mantêm a correção fiel e evitam respostas longas.
+    linhas = [line.strip() for line in texto_limitado.split("\n") if line.strip()]
 
-    if provedor == "ollama":
-        try:
-            return chamar_ollama(prompt)
-        except Exception as erro:
-            return None, f"Ollama indisponível: {erro}"
+    texto_final_corrigido = []
 
-    if provedor == "auto":
-        erro_openai = None
-        if os.environ.get("OPENAI_API_KEY"):
-            try:
-                return chamar_openai(_mensagens_correcao(prompt), temperature=0.1)
-            except Exception as erro:
-                erro_openai = erro
+    try:
+        print("Corrigindo texto com Groq (processando blocos)...")
+        for bloco in linhas:
+            prompt = PROMPT_CORRECAO.format(texto=bloco)
+            resposta, _ = chamar_groq(
+                prompt,
+                temperature=0.1,
+                medidor=medidor,
+                etapa="Groq - correção da transcrição",
+            )
+            if resposta:
+                texto_final_corrigido.append(resposta.strip())
+            else:
+                texto_final_corrigido.append(bloco)  # Se falhar, mantém o original daquele bloco.
 
-        try:
-            return chamar_ollama(prompt)
-        except Exception as erro_ollama:
-            if erro_openai is not None:
-                return None, f"OpenAI indisponível: {erro_openai}; Ollama indisponível: {erro_ollama}"
-            return None, f"Ollama indisponível: {erro_ollama}"
+        return " \n".join(texto_final_corrigido), f"Groq ({MODELO_GROQ})"
 
-    return None, f"provedor de IA desconhecido: {provedor}"
+    except Exception as erro:
+        # Retorna o texto original como fallback se a Groq falhar completamente.
+        return None, f"Groq indisponível: {erro}"
 
 
-def corrigir_transcricao(sufixo=None, ia_provider=None):
+def corrigir_transcricao(sufixo=None, ia_provider=None, medidor=None):
     padrao = f"transcricao_{sufixo}_*.txt" if sufixo else "transcricao_*.txt"
     arquivo_transcricao = arquivo_mais_recente(padrao)
     if not arquivo_transcricao:
-        print("Nenhuma transcrição encontrada.")
-        raise SystemExit(1)
+        raise RuntimeError("Nenhuma transcrição encontrada.")
 
     conteudo = arquivo_transcricao.read_text(encoding="utf-8")
     texto_bruto = extrair_corpo_transcricao(conteudo)
 
-    texto_corrigido, motivo_ou_metodo = corrigir_com_ia(texto_bruto, ia_provider=ia_provider)
+    # Executa a correção inteligente
+    texto_corrigido, motivo_ou_metodo = corrigir_com_ia(
+        texto_bruto, ia_provider=ia_provider, medidor=medidor
+    )
+
     if texto_corrigido:
         texto = ajustar_pontuacao_basica(texto_corrigido)
         metodo = motivo_ou_metodo
@@ -110,30 +96,26 @@ def corrigir_transcricao(sufixo=None, ia_provider=None):
         metodo = f"Ajuste básico ({motivo_ou_metodo})"
 
     agora = datetime.now()
-    data = agora.strftime("%d/%m/%Y")
-    hora = agora.strftime("%H:%M:%S")
     timestamp = agora.strftime("%Y%m%d_%H%M%S")
-
     RESULTADOS_DIR.mkdir(exist_ok=True)
-    nome = (
-        f"transcricao_corrigida_{sufixo}_{timestamp}.txt"
-        if sufixo
-        else f"transcricao_corrigida_{timestamp}.txt"
-    )
+    nome = f"transcricao_corrigida_{sufixo}_{timestamp}.txt" if sufixo else f"transcricao_corrigida_{timestamp}.txt"
     arquivo_saida = RESULTADOS_DIR / nome
 
+    inicio_escrita = time.perf_counter()
     with open(arquivo_saida, "w", encoding="utf-8") as arquivo:
         arquivo.write("=" * 60 + "\n")
         arquivo.write("CLASSNOTE AI - TRANSCRIÇÃO CORRIGIDA\n")
         arquivo.write("=" * 60 + "\n\n")
-        arquivo.write(f"Data: {data}\n")
-        arquivo.write(f"Hora: {hora}\n\n")
+        arquivo.write(f"Data: {agora.strftime('%d/%m/%Y')}\n")
+        arquivo.write(f"Hora: {agora.strftime('%H:%M:%S')}\n\n")
         arquivo.write(f"Arquivo analisado: {arquivo_transcricao.name}\n")
         arquivo.write(f"Método de correção: {metodo}\n\n")
         arquivo.write("=" * 60 + "\n")
         arquivo.write("TRANSCRIÇÃO CORRIGIDA\n")
         arquivo.write("=" * 60 + "\n\n")
         arquivo.write(texto)
+    if medidor:
+        medidor.registrar("Disco - escrita da transcrição corrigida", time.perf_counter() - inicio_escrita)
 
     return texto, arquivo_saida
 

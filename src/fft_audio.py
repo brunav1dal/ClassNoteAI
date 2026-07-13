@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+import time
 
 import matplotlib
 matplotlib.use("Agg")
@@ -13,7 +14,8 @@ AUDIO_PADRAO = BASE_DIR / "audio" / "aula.wav"
 RESULTADOS_DIR = BASE_DIR / "resultados"
 
 
-def gerar_fft(audio_path=None, sufixo=None):
+def gerar_fft(audio_path=None, sufixo=None, medidor=None):
+    inicio = time.perf_counter()
     audio_path = Path(audio_path) if audio_path else AUDIO_PADRAO
     fs, audio = wavfile.read(str(audio_path))
 
@@ -41,6 +43,9 @@ def gerar_fft(audio_path=None, sufixo=None):
 
     plt.savefig(arquivo_saida)
     plt.close()
+
+    if medidor:
+        medidor.registrar("FFT - leitura, cálculo e gráfico", time.perf_counter() - inicio)
 
     return arquivo_saida
 

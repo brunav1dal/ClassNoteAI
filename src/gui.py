@@ -140,15 +140,10 @@ class Janela(QWidget):
         self.botao_pdf = QPushButton("Emitir PDF")
 
         self.combo_whisper = QComboBox()
-        self.combo_whisper.addItem("Rápido - tiny", "tiny")
-        self.combo_whisper.addItem("Equilibrado - base", "base")
-        self.combo_whisper.addItem("Mais preciso - small", "small")
+        self.combo_whisper.addItem("CPU otimizada - base (int8)", "base")
 
         self.combo_ia = QComboBox()
-        self.combo_ia.addItem("Automático", "auto")
-        self.combo_ia.addItem("OpenAI GPT", "openai")
-        self.combo_ia.addItem("Ollama local", "ollama")
-        self.combo_ia.addItem("Local sem IA externa", "local")
+        self.combo_ia.addItem("Groq API", "groq")
 
         self.progresso = QProgressBar()
         self.progresso.setValue(0)
@@ -353,7 +348,7 @@ O áudio será preparado automaticamente para:
 - amostra de 16 bits
 
 Dica de desempenho:
-Use o modelo Whisper "Rápido - tiny" para testes e "base/small" quando quiser mais precisão.
+O faster-whisper usa o modelo "base" com quantização int8, otimizado para CPU.
 """
         )
 
@@ -377,7 +372,7 @@ Whisper converte áudio em texto.
 O sistema remove conectores, preposições e vícios de fala para manter termos úteis.
 
 6. Geração de conteúdo
-Pode usar OpenAI API, se OPENAI_API_KEY estiver configurada, ou Ollama local.
+Groq API gera a correção e o material de estudo.
 """
         )
 

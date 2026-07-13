@@ -1,0 +1,41 @@
+============================================================
+CLASSNOTE AI - MATERIAL DE ESTUDO
+============================================================
+
+Data: 12/07/2026
+Hora: 21:09:11
+
+Transcrição utilizada: transcricao_corrigida_294c8c92c1c241c58d699fcd95813fba_20260712_210901.txt
+Quantidade de palavras no prompt: 1388
+Modo utilizado: AULA
+IA utilizada: Groq (llama-3.1-8b-instant)
+
+============================================================
+MATERIAL GERADO PELA IA
+============================================================
+
+=== RESUMO
+O eletromagnetismo é uma área do estudo que aborda a interação entre o campo elétrico e o campo magnético. Esses dois fenômenos são fundamentais para entender como as cargas elétricas se comportam e interagem com o ambiente. O campo elétrico é produzido por cargas elétricas, enquanto o campo magnético é produzido por correntes elétricas. A combinação desses dois campos é o que permite a existência de fenômenos como a força elétrica e a força magnética.
+
+O professor destaca a importância de entender a relação entre o campo elétrico e o campo magnético, pois eles são fundamentais para a compreensão de muitos fenômenos naturais e tecnológicos. Além disso, a existência de um campo magnético na Terra é crucial para proteger a vida na superfície da radiação solar e dos ventos solares.
+
+=== CONCEITOS
+- **Campo Elétrico**: é produzido por cargas elétricas e é representado por linhas de campo que saem da carga positiva e entram na carga negativa.
+- **Campo Magnético**: é produzido por correntes elétricas e é representado por linhas de campo que saem do polo norte e entram no polo sul.
+- **Monopólos Magnéticos**: não existem, o que significa que não é possível ter um polo magnético isolado, pois sempre há um polo norte e um polo sul.
+- **Campo Magnético da Terra**: é produzido pelo movimento dos metais líquidos no núcleo da Terra e é responsável por proteger a vida na superfície da radiação solar e dos ventos solares.
+
+=== ATENÇÃO E PROVA
+- **Dúvidas**: a existência de monopólos magnéticos e a produção do campo magnético da Terra.
+- **Pegadinhas**: a ideia de que o campo magnético é produzido por cargas elétricas, em vez de correntes elétricas.
+- **Trechos Confusos**: a explicação sobre a produção do campo magnético da Terra e a existência de monopólos magnéticos.
+
+=== FLASHCARDS
+FRENTE: O que é o campo elétrico? | VERSO: É produzido por cargas elétricas e é representado por linhas de campo que saem da carga positiva e entram na carga negativa.
+FRENTE: O que é o campo magnético? | VERSO: É produzido por correntes elétricas e é representado por linhas de campo que saem do polo norte e entram no polo sul.
+FRENTE: O que são monopólos magnéticos? | VERSO: Não existem, o que significa que não é possível ter um polo magnético isolado.
+
+=== QUESTÕES
+1. Descreva a diferença fundamental entre o campo elétrico e o campo magnético.
+2. Explique por que o campo magnético da Terra é importante para a vida na superfície.
+3. Descreva a produção do campo magnético da Terra e a existência de monopólos magnéticos.

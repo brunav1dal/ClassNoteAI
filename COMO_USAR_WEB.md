@@ -8,39 +8,31 @@ No PowerShell, dentro da pasta do projeto:
 .\iniciar_web.bat
 ```
 
-Depois abra no navegador:
+Depois abra no navegador o endereço informado pelo servidor ao iniciar.
+
+## Configurar a Groq
+
+Crie um arquivo `.env` na raiz do projeto com sua chave da Groq, que começa com `gsk_`:
 
 ```text
-http://127.0.0.1:8000
-```
-
-## Como usar GPT
-
-Se quiser usar OpenAI GPT na geração do material, crie um arquivo chamado `.env` na raiz do projeto:
-
-```text
-OPENAI_API_KEY=sua_chave_aqui
-OPENAI_MODEL=gpt-4.1-mini
-```
-
-Depois inicie normalmente:
-
-```powershell
-.\iniciar_web.bat
+GROQ_API_KEY=gsk_sua_chave_aqui
 ```
 
 Alternativamente, configure a chave no PowerShell antes de iniciar:
 
 ```powershell
-$env:OPENAI_API_KEY="sua_chave_aqui"
-$env:OPENAI_MODEL="gpt-4.1-mini"
+$env:GROQ_API_KEY="gsk_sua_chave_aqui"
 .\iniciar_web.bat
 ```
 
-Se não houver `OPENAI_API_KEY`, o modo automático usa o Ollama local.
+Instale o cliente oficial se necessário:
+
+```powershell
+pip install groq
+```
 
 Não envie o arquivo `.env` para o GitHub. Ele está listado no `.gitignore`.
 
 ## Observação
 
-O GitHub Pages pode hospedar a interface, mas o processamento real precisa desta API local ou de um backend publicado em algum servidor.
+O processamento de áudio exige que a interface e o backend sejam publicados no mesmo domínio ou que exista um proxy configurado para as rotas `/api`.

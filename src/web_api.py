@@ -14,6 +14,7 @@ from urllib.parse import urlparse, parse_qs
 from audio_utils import preparar_audio
 from config_env import carregar_env
 from correcao_texto import corrigir_transcricao
+from desempenho import MedidorDesempenho
 from fft_audio import gerar_fft
 from resultados_utils import arquivo_mais_recente, ler_texto_recente, imagem_data_url
 from resumo_ia import gerar_material_estudo
@@ -138,17 +139,19 @@ def publicar_resultado_parcial(job_id, audio_path, nome_original, logs, sufixo=N
 
 
 def processar(payload, job_id=None):
-    origem, nome_original = salvar_upload(payload)
+    medidor = MedidorDesempenho()
+    with medidor.etapa("Upload - decodificação e gravação do áudio"):
+        origem, nome_original = salvar_upload(payload)
     inicio_job = datetime.now().timestamp()
-    whisper_model = payload.get("whisperModel") or "tiny"
-    ia_provider = payload.get("aiProvider") or "auto"
+    whisper_model = "base"
+    ia_provider = "groq"
     max_seconds = payload.get("maxSeconds")
 
     audio_destino = AUDIO_DIR / (f"aula_{job_id}.wav" if job_id else "aula.wav")
 
     logs = []
     atualizar_job(job_id, progress=8, status="Preparando áudio")
-    logs.append(preparar_audio(origem, audio_destino, max_seconds=max_seconds))
+    logs.append(preparar_audio(origem, audio_destino, max_seconds=max_seconds, medidor=medidor))
     publicar_resultado_parcial(job_id, audio_destino, nome_original, logs, sufixo=job_id, since=inicio_job)
 
     atualizar_job(job_id, progress=18, status="Rodando FFT e Whisper em paralelo")
@@ -163,15 +166,16 @@ def processar(payload, job_id=None):
         avancar_progresso(valor, "Transcrevendo com Whisper")
 
     tarefas = {
-        "FFT": lambda: gerar_fft(audio_path=audio_destino, sufixo=job_id),
+        "FFT": lambda: gerar_fft(audio_path=audio_destino, sufixo=job_id, medidor=medidor),
         "Whisper": lambda: transcrever(
             audio_path=audio_destino,
             whisper_model=whisper_model,
             sufixo=job_id,
             progress_callback=reportar_progresso_whisper,
+            medidor=medidor,
         ),
     }
-    with ThreadPoolExecutor(max_workers=2) as executor:
+    with medidor.etapa("Paralelo - FFT + Whisper (tempo de parede)"), ThreadPoolExecutor(max_workers=2) as executor:
         futuros = {executor.submit(tarefa): nome for nome, tarefa in tarefas.items()}
         concluidas = 0
         for futuro in as_completed(futuros):
@@ -184,7 +188,7 @@ def processar(payload, job_id=None):
             publicar_resultado_parcial(job_id, audio_destino, nome_original, logs, sufixo=job_id, since=inicio_job)
 
     avancar_progresso(66, "Corrigindo transcrição")
-    corrigir_transcricao(sufixo=job_id, ia_provider=ia_provider)
+    corrigir_transcricao(sufixo=job_id, ia_provider=ia_provider, medidor=medidor)
     logs.append("Transcrição corrigida.")
     publicar_resultado_parcial(job_id, audio_destino, nome_original, logs, sufixo=job_id, since=inicio_job)
 
@@ -195,17 +199,25 @@ def processar(payload, job_id=None):
         raise RuntimeError("Nenhuma transcrição encontrada para extrair termos-chave.")
 
     conteudo_transcricao = transcricao_corrigida.read_text(encoding="utf-8")
-    termos = gerar_termos_chave(conteudo_transcricao, transcricao_corrigida.name, sufixo=job_id)
+    termos = gerar_termos_chave(
+        conteudo_transcricao, transcricao_corrigida.name, sufixo=job_id, medidor=medidor
+    )
     logs.append(f"Termos-chave gerados: {termos['total']} termos analisados.")
     publicar_resultado_parcial(job_id, audio_destino, nome_original, logs, sufixo=job_id, since=inicio_job)
 
     atualizar_job(job_id, progress=92, status="Gerando material de estudo")
-    gerar_material_estudo(sufixo=job_id, ia_provider=ia_provider)
+    gerar_material_estudo(sufixo=job_id, ia_provider=ia_provider, medidor=medidor)
     logs.append("Material de estudo gerado.")
     publicar_resultado_parcial(job_id, audio_destino, nome_original, logs, sufixo=job_id, since=inicio_job)
 
     atualizar_job(job_id, progress=96, status="Montando resposta final")
-    resultado = montar_resultado(audio_destino, nome_original, logs, sufixo=job_id, since=inicio_job)
+    with medidor.etapa("Resultado - leitura e montagem da resposta"):
+        resultado = montar_resultado(audio_destino, nome_original, logs, sufixo=job_id, since=inicio_job)
+
+    arquivo_relatorio, _ = medidor.salvar(RESULTADOS_DIR, sufixo=job_id)
+    resultado["desempenho"] = medidor.dados()
+    resultado["desempenho"]["relatorio"] = arquivo_relatorio.name
+    logs.append(f"Relatório de desempenho salvo: {arquivo_relatorio.name}")
 
     try:
         if origem.exists():
@@ -322,10 +334,10 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 def main():
-    host = "127.0.0.1"
+    host = os.environ.get("CLASSNOTE_WEB_HOST", "127.0.0.1")
     porta = int(os.environ.get("CLASSNOTE_WEB_PORT", "8000"))
     servidor = ThreadingHTTPServer((host, porta), Handler)
-    print(f"ClassNote AI web rodando em http://{host}:{porta}")
+    print(f"Servidor web do ClassNote AI: http://{host}:{porta}")
     print("Pressione Ctrl+C para encerrar.")
     servidor.serve_forever()
 

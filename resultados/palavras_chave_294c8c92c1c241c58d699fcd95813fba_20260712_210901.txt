@@ -1,0 +1,28 @@
+============================================================
+CLASSNOTE AI - TERMOS-CHAVE
+============================================================
+
+Data: 12/07/2026
+Hora: 21:09:01
+
+Arquivo analisado: transcricao_corrigida_294c8c92c1c241c58d699fcd95813fba_20260712_210901.txt
+
+Total de termos analisados: 482
+Termos únicos: 198
+
+============================================================
+TOP 12 TERMOS-CHAVE
+============================================================
+
+campo: 38
+aqui: 30
+magnético: 26
+norte: 16
+carga: 15
+elétrico: 12
+coisa: 9
+exemplo: 9
+polo: 9
+ferro: 9
+positiva: 8
+nosso: 6

@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import time
 from pathlib import Path
 
 
@@ -40,13 +41,14 @@ def adicionar_ffmpeg_ao_path(env):
     return env
 
 
-def preparar_audio(origem, destino, max_seconds=None, timeout=600):
+def preparar_audio(origem, destino, max_seconds=None, timeout=600, medidor=None):
     destino = Path(destino)
     destino.parent.mkdir(exist_ok=True)
     origem = Path(origem)
     ffmpeg = encontrar_ffmpeg()
 
     if ffmpeg:
+        inicio = time.perf_counter()
         comando = [
             ffmpeg,
             "-y",
@@ -76,6 +78,8 @@ def preparar_audio(origem, destino, max_seconds=None, timeout=600):
             text=True,
             timeout=timeout,
         )
+        if medidor:
+            medidor.registrar("FFmpeg - conversão e pré-processamento", time.perf_counter() - inicio)
         detalhes = "WAV mono, 16 kHz, 16 bits, silêncio removido e volume normalizado"
         if max_seconds:
             detalhes += f", limitado a {max_seconds}s"
@@ -88,7 +92,10 @@ def preparar_audio(origem, destino, max_seconds=None, timeout=600):
         )
 
     if origem.resolve() != destino.resolve():
+        inicio = time.perf_counter()
         shutil.copy2(origem, destino)
+        if medidor:
+            medidor.registrar("Disco - cópia do áudio WAV", time.perf_counter() - inicio)
         return "Arquivo WAV copiado para processamento."
 
     return "Usando o arquivo WAV existente."

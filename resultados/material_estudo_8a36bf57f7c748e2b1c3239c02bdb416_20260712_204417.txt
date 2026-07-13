@@ -1,0 +1,42 @@
+============================================================
+CLASSNOTE AI - MATERIAL DE ESTUDO
+============================================================
+
+Data: 12/07/2026
+Hora: 20:44:17
+
+Transcrição utilizada: transcricao_corrigida_8a36bf57f7c748e2b1c3239c02bdb416_20260712_204348.txt
+Quantidade de palavras no prompt: 1360
+Modo utilizado: AULA
+IA utilizada: Groq (llama-3.1-8b-instant)
+
+============================================================
+MATERIAL GERADO PELA IA
+============================================================
+
+=== RESUMO
+O professor está discutindo o conceito de eletro-magnetismo, destacando a relação entre o campo elétrico e o campo magnético. Ele explica que esses dois campos são interligados e trabalham juntos, mas também podem ser estudados separadamente. O professor também aborda a diferença fundamental entre o campo elétrico e o campo magnético, destacando que não existem monopólogos magnéticos, ou seja, não existem polos magnéticos isolados.
+
+O professor também discute a importância do campo magnético na Terra, destacando que ele protege a gente dos ventos-solares e que é produzido pelo movimento dos metais líquidos no núcleo da Terra.
+
+=== CONCEITOS
+- **Campo Magnético**: é um campo que é produzido por partículas carregadas e que é caracterizado por linhas de campo que saem do polo norte e entram no polo sul.
+- **Monopólogos Magnéticos**: não existem, ou seja, não existem polos magnéticos isolados.
+- **Campo Elétrico**: é um campo que é produzido por cargas elétricas e que é caracterizado por linhas de campo que saem da carga positiva e entram na carga negativa.
+- **Linhas de Campo**: são as linhas que representam o campo magnético ou elétrico e que saem do polo norte e entram no polo sul.
+- **Polo Norte e Sul**: são os pontos extremos do campo magnético e que são caracterizados por linhas de campo que saem do polo norte e entram no polo sul.
+
+=== ATENÇÃO E PROVA
+- **Diferença entre Campo Elétrico e Campo Magnético**: é importante entender a diferença fundamental entre esses dois campos, destacando que não existem monopólogos magnéticos.
+- **Importância do Campo Magnético**: é importante entender a importância do campo magnético na Terra, destacando que ele protege a gente dos ventos-solares.
+- **Produção do Campo Magnético**: é importante entender que o campo magnético é produzido pelo movimento dos metais líquidos no núcleo da Terra.
+
+=== FLASHCARDS
+FRENTE: O que é um campo magnético? | VERSO: É um campo que é produzido por partículas carregadas e que é caracterizado por linhas de campo que saem do polo norte e entram no polo sul.
+FRENTE: O que são monopólogos magnéticos? | VERSO: Não existem, ou seja, não existem polos magnéticos isolados.
+FRENTE: Qual é a importância do campo magnético na Terra? | VERSO: Ele protege a gente dos ventos-solares.
+
+=== QUESTÕES
+1. Qual é a diferença fundamental entre o campo elétrico e o campo magnético?
+2. Por que não existem monopólogos magnéticos?
+3. Qual é a importância do campo magnético na Terra?

@@ -140,6 +140,14 @@
       display: block;
     }
 
+    .complete-message button {
+      width: auto;
+      margin: 10px 0 0;
+      background: #047857;
+      border-color: #047857;
+      color: #ffffff;
+    }
+
     main {
       width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
@@ -549,18 +557,13 @@
         <label>
           Whisper
           <select id="whisperSelect">
-            <option value="tiny">Rápido - tiny</option>
-            <option value="base">Equilibrado - base</option>
-            <option value="small">Mais preciso - small</option>
+            <option value="base">CPU otimizada - base (int8)</option>
           </select>
         </label>
         <label>
           IA
           <select id="aiSelect">
-            <option value="auto">Automático</option>
-            <option value="openai">OpenAI GPT</option>
-            <option value="ollama">Ollama local</option>
-            <option value="local">Local sem IA externa</option>
+            <option value="groq">Groq API</option>
           </select>
         </label>
         <label>
@@ -640,10 +643,8 @@
     let lastResult = null;
 
     function apiBase() {
-      if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
-        return "";
-      }
-      return "http://127.0.0.1:8000";
+      // A API é acessada no mesmo domínio da interface, sem endereço local fixo.
+      return "";
     }
 
     function escapeHtml(value) {
@@ -692,6 +693,21 @@
 
     function showCompleteMessage(message) {
       completeMessage.textContent = message;
+      completeMessage.classList.add("visible");
+    }
+
+    function abrirMaterialDidatico() {
+      currentTab = "material";
+      tabButtons.forEach((item) => item.classList.toggle("active", item.dataset.tab === "material"));
+      renderTab();
+      content.scrollIntoView({behavior: "smooth", block: "start"});
+    }
+
+    function showMaterialReadyAlert() {
+      completeMessage.innerHTML = `
+        <div>Material didático gerado com sucesso.</div>
+        <button type="button" onclick="abrirMaterialDidatico()">Ver material didático</button>
+      `;
       completeMessage.classList.add("visible");
     }
 
@@ -766,8 +782,34 @@
       return depoisDoMarcador.replace(/^\s*=+\s*/, "").trim();
     }
 
+    function normalizarCabecalho(text) {
+      let value = String(text || "").trim()
+        .replace(/^={3}\s*/, "")
+        .replace(/\s*={3}$/, "")
+        .replace(/^#{1,6}\s*/, "")
+        .replace(/^[-*]\s*/, "")
+        .replace(/^\*{1,2}|\*{1,2}$/g, "")
+        .replace(/:$/, "")
+        .trim();
+
+      try {
+        if (/[ÃÂâ]/.test(value)) value = decodeURIComponent(escape(value));
+      } catch (_) {
+        // Mantém o texto original se ele já estiver em UTF-8 válido.
+      }
+
+      return value.normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s+/g, " ")
+        .toUpperCase();
+    }
+
     function parseMaterial(text) {
       const headings = [
+        "RESUMO",
+        "CONCEITOS",
+        "ATENÇÃO E PROVA",
+        "QUESTÕES",
         "RESUMO DA AULA",
         "CONCEITOS IMPORTANTES",
         "EXPLICAÇÃO DIDÁTICA",
@@ -782,6 +824,7 @@
         "INTERPRETAÇÃO DA MENSAGEM",
         "OBSERVAÇÕES ÚTEIS"
       ];
+      const headingMap = new Map(headings.map((heading) => [normalizarCabecalho(heading), heading]));
       const conteudo = conteudoGeradoPelaIa(text);
       const lines = conteudo.split(/\r?\n/);
       const sections = [];
@@ -789,10 +832,10 @@
 
       for (const rawLine of lines) {
         const line = rawLine.trim();
-        const upper = line.toUpperCase();
-        if (headings.includes(upper)) {
+        const heading = headingMap.get(normalizarCabecalho(line));
+        if (heading) {
           if (current) sections.push(current);
-          current = {title: upper, body: []};
+          current = {title: heading, body: []};
           continue;
         }
         if (current && line) current.body.push(line);
@@ -807,27 +850,40 @@
 
     function flashcardsFromSection(section) {
       if (!section) return [];
-      const body = section.body.join("\n");
+      const body = section.body.join("\n").replace(/\r/g, "");
+      const cardsFrenteVerso = body.split("\n").map((line) => {
+        const match = line.match(
+          /^\s*(?:[-*]|\d+[.)])?\s*FRENTE\s*:\s*(.*?)\s*\|\s*VERSO\s*:\s*(.+?)\s*$/i
+        );
+        if (!match) return null;
+        return {pergunta: match[1].trim(), resposta: match[2].trim()};
+      }).filter(Boolean);
+
+      if (cardsFrenteVerso.length) return cardsFrenteVerso;
+
       const chunks = body
-        .split(/\n(?=\d+\.|-|\?)/)
+        .split(/\n\s*(?=(?:\d+[.)]\s*)?(?:\*{0,2})?pergunta\s*(?:\d+)?\s*:)/i)
         .map((item) => item.trim())
         .filter(Boolean);
 
-      const brutos = chunks.length ? chunks : section.body;
+      const brutos = chunks.length ? chunks : body.split(/\n\s*(?=\d+[.)]\s+)/).filter(Boolean);
 
       return brutos.map((chunk) => {
-        const partes = chunk.split(/resposta\s*:/i);
+        const partes = chunk.split(/\*{0,2}resposta\*{0,2}\s*:/i);
         if (partes.length > 1) {
           return {
-            pergunta: partes[0].trim(),
+            pergunta: partes[0]
+              .replace(/^\s*\d+[.)]\s*/, "")
+              .replace(/^\*{0,2}pergunta\*{0,2}\s*:\s*/i, "")
+              .trim(),
             resposta: partes.slice(1).join("Resposta:").trim()
           };
         }
-        return {pergunta: chunk.trim(), resposta: "Sem resposta identificada para este flashcard."};
-      });
+        return null;
+      }).filter(Boolean);
     }
 
-    function renderMaterialCards(materialText) {
+    function renderMaterialCards(materialText, forPrint = false) {
       const sections = parseMaterial(materialText);
       const flashcardSection = sections.find((section) => section.title === "FLASHCARDS");
       const regularSections = sections.filter((section) => section.title !== "FLASHCARDS");
@@ -835,10 +891,10 @@
 
       const avisoLocal = infoProvedor.usouIaExterna ? "" : `
         <div class="ia-aviso">
-          <strong>⚠ Este material foi gerado localmente, sem uma IA externa (GPT/Ollama).</strong>
+          <strong>⚠ Não foi possível gerar o material com a Groq.</strong>
           <p>O texto abaixo é um modelo genérico reaproveitando trechos da transcrição, não uma
           análise real do conteúdo da aula. ${infoProvedor.motivo ? `Motivo: ${escapeHtml(infoProvedor.motivo)}.` : ""}
-          Confira sua chave da OpenAI (ou o Ollama local) e reprocesse para ter um resumo, pontos
+          Confira a variável GROQ_API_KEY e reprocesse para ter um resumo, pontos
           de atenção e flashcards realmente elaborados a partir da aula.</p>
         </div>
       `;
@@ -873,7 +929,7 @@
             <h2>Material de estudo</h2>
             <p>Visualização dinâmica em cards, resumo e flashcards.</p>
           </div>
-          <button class="pdf-button" type="button" onclick="createMaterialPdf()">Criar PDF</button>
+          ${forPrint ? "" : '<button class="pdf-button" type="button" onclick="createMaterialPdf()">Criar PDF</button>'}
         </div>
         ${avisoLocal}
         <div class="material-grid">${sectionCards || "<div class='placeholder'>Sem seções identificadas.</div>"}</div>
@@ -900,6 +956,7 @@
     });
 
     function createMaterialPdf() {
+      const inicioPdf = performance.now();
       const material = lastResult?.material || "";
       if (!material.trim()) {
         alert("Nenhum material de estudo disponível para gerar PDF.");
@@ -907,6 +964,14 @@
       }
 
       const win = window.open("", "_blank");
+      if (!win) {
+        alert("O navegador bloqueou a janela de impressão. Permita pop-ups e tente novamente.");
+        return;
+      }
+
+      // Reutiliza os mesmos cards mostrados no navegador, em vez do texto bruto.
+      const materialEmCards = renderMaterialCards(material, true);
+      const estilosDaPagina = document.querySelector("style").textContent;
       win.document.write(`
         <!doctype html>
         <html lang="pt-BR">
@@ -914,21 +979,27 @@
           <meta charset="utf-8">
           <title>ClassNote AI - Material de Estudo</title>
           <style>
-            body { font-family: Arial, sans-serif; color: #111827; padding: 32px; line-height: 1.5; }
-            h1 { margin-top: 0; }
-            pre { white-space: pre-wrap; font-family: Arial, sans-serif; }
+            ${estilosDaPagina}
+            body { width: auto; margin: 0; padding: 24px; }
+            .material-toolbar { display: block; }
+            .flashcard { break-inside: avoid; cursor: default; }
+            .flashcard-inner { transform: none !important; }
+            .flashcard-back { display: none; }
+            @page { margin: 12mm; }
           </style>
         </head>
         <body>
-          <h1>ClassNote AI - Material de Estudo</h1>
-          <p>Gerado em ${escapeHtml(new Date().toLocaleString("pt-BR"))}</p>
-          <pre>${escapeHtml(material)}</pre>
+          ${materialEmCards}
         </body>
         </html>
       `);
       win.document.close();
-      win.focus();
-      win.print();
+      // Aguarda a nova janela aplicar o CSS antes de abrir a impressão.
+      setTimeout(() => {
+        win.focus();
+        win.print();
+        console.info(`[Desempenho] PDF - preparação da visualização: ${(performance.now() - inicioPdf).toFixed(1)} ms`);
+      }, 250);
     }
 
     async function waitForJob(jobId) {
@@ -994,7 +1065,7 @@
             <div><strong>Tamanho</strong>${escapeHtml(fileSize)}</div>
             <div><strong>Tipo</strong>${escapeHtml(fileType)}</div>
           </div>
-          <div class="placeholder">Aguardando processamento pela API local.</div>
+          <div class="placeholder">Aguardando processamento.</div>
         `;
         return;
       }
@@ -1045,7 +1116,9 @@
       }
 
       if (currentTab === "material") {
+        const inicioRenderizacao = performance.now();
         content.innerHTML = renderMaterialCards(lastResult.material || "");
+        console.info(`[Desempenho] Interface - renderização do material: ${(performance.now() - inicioRenderizacao).toFixed(1)} ms`);
       }
     }
 
@@ -1113,7 +1186,7 @@
         }
 
         setProgress(100, "processamento concluído");
-        showCompleteMessage("Material gerado com sucesso. Você já pode navegar pelas abas ou criar o PDF do material de estudo.");
+        showMaterialReadyAlert();
         currentTab = "signal";
         tabButtons.forEach((item) => item.classList.toggle("active", item.dataset.tab === "signal"));
         renderTab();
@@ -1121,7 +1194,7 @@
         setProgress(0, "erro no processamento");
         content.innerHTML = `
           <h2>Erro ao processar</h2>
-          <p>Verifique se a API local está rodando em http://127.0.0.1:8000.</p>
+          <p>Não foi possível concluir o processamento. Verifique as chaves e a conexão com os provedores de IA.</p>
           <pre>${escapeHtml(error.message)}</pre>
         `;
       } finally {
@@ -1143,7 +1216,7 @@
         setProgress(0, "erro ao carregar salvos");
         content.innerHTML = `
           <h2>Erro ao carregar resultados</h2>
-          <p>Verifique se a API local está rodando e se existem arquivos na pasta resultados.</p>
+          <p>Não foi possível carregar os resultados disponíveis.</p>
           <pre>${escapeHtml(error.message)}</pre>
         `;
       } finally {

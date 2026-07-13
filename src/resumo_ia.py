@@ -1,10 +1,9 @@
 from datetime import datetime
-import os
 from pathlib import Path
-import re
+import time
 
 from config_env import carregar_env
-from ia_utils import chamar_openai, chamar_ollama
+from ia_utils import chamar_groq
 from resultados_utils import arquivo_mais_recente
 from texto_utils import extrair_corpo_transcricao, limitar_texto
 
@@ -26,6 +25,8 @@ Regras:
 - Não copie o texto literalmente, exceto se for necessário citar um termo técnico.
 - Reescreva com suas próprias palavras.
 - Seja claro, didático e objetivo.
+- Use somente informações presentes no texto; não crie contexto, causas, consequências ou dados não mencionados.
+- Quando não houver informação suficiente, escreva "Não informado no texto.".
 
 Entregue no formato abaixo, com os títulos exatamente como estão escritos (sem numeração):
 
@@ -46,47 +47,38 @@ Texto:
     return (
         "AULA",
         f"""
-Crie um material de estudo universitário em português brasileiro usando somente a transcrição.
+Você é um assistente de IA focado em gerar dados estruturados para uma interface de estudos. Use APENAS a transcrição fornecida no final para preencher o modelo.
 
-Regras obrigatórias:
-- Não copie e cole trechos longos da transcrição.
-- Reescreva o conteúdo com suas próprias palavras.
-- Explique de forma didática, como se estivesse ensinando o assunto a um aluno.
-- Preserve o sentido da aula, mas organize as ideias em texto claro e coeso.
-- Não invente autores, fórmulas, conceitos ou exemplos sem base na transcrição.
-- Quando a transcrição estiver confusa, explique com cautela e sinalize que o trecho precisa de revisão.
+REGRAS OBRIGATÓRIAS:
+1. Respeite rigorosamente a estrutura de blocos separada por "===".
+2. Não adicione saudações, introduções ou conclusões (comece direto no primeiro bloco).
+3. Reescreva tudo com suas próprias palavras de forma didática. Nunca invente dados.
+4. Se algo não foi dito na transcrição, preencha a seção estritamente com: "Não informado na transcrição."
 
-Formato obrigatório:
+Gere a resposta exatamente neste formato:
 
-RESUMO DA AULA
-Escreva de 2 a 4 parágrafos com suas próprias palavras, explicando o assunto central da aula, a lógica da explicação e por que esses pontos são importantes. Não use frases copiadas da transcrição.
+=== RESUMO
+[Escreva de 2 a 3 parágrafos explicando o assunto central da aula e a lógica do professor.]
 
-CONCEITOS IMPORTANTES
-Liste os conceitos centrais e explique cada um de forma simples.
+=== CONCEITOS
+[Liste os conceitos centrais e explicações passo a passo. Inclua aqui os exemplos práticos e fórmulas caso tenham sido citados.]
 
-EXPLICAÇÃO DIDÁTICA
-Explique o conteúdo passo a passo, com linguagem de professor.
+=== ATENÇÃO E PROVA
+[Destaque possíveis dúvidas, pegadinhas, trechos confusos e o que é mais importante estudar para a prova.]
 
-FÓRMULAS E EQUAÇÕES MENCIONADAS
-Liste somente fórmulas realmente mencionadas. Se nenhuma fórmula aparecer, diga isso.
+=== FLASHCARDS
+[Gere de 2 a 4 flashcards estritamente com o formato abaixo, separando FRENTE e VERSO por uma barra vertical "|". Não use numeração ou bullet points.]
+FRENTE: [Pergunta direta sobre a matéria] | VERSO: [Resposta curta e direta]
+FRENTE: [Pergunta direta sobre a matéria] | VERSO: [Resposta curta e direta]
 
-EXEMPLOS PRÁTICOS
-Crie exemplos simples diretamente relacionados ao que foi dito na aula.
+=== QUESTÕES
+[Crie até 3 perguntas discursivas que sirvam para revisão do conteúdo.]
 
-PONTOS DE ATENÇÃO
-Liste possíveis dúvidas, pegadinhas ou trechos que merecem revisão.
+---
+TEXTO DA TRANSCRIÇÃO:
+[COLE SUA TRANSCRIÇÃO AQUI]
 
-DICAS PARA PROVA
-Destaque o que parece mais importante estudar.
 
-FLASHCARDS
-Crie de 4 a 6 flashcards. Para cada um, escreva a pergunta em uma linha e, na linha seguinte, a resposta começando exatamente com "Resposta:".
-
-PERGUNTAS DE REVISÃO
-Crie 5 questões discursivas.
-
-RESUMO FINAL
-Faça uma síntese curta, sem copiar a transcrição.
 
 Transcrição:
 {texto}
@@ -94,161 +86,20 @@ Transcrição:
     )
 
 
-def gerar_com_openai(prompt):
-    return chamar_openai(
-        [
-            {
-                "role": "system",
-                "content": (
-                    "Você cria materiais de estudo claros, didáticos e fiéis ao texto enviado. "
-                    "Você deve parafrasear e organizar as ideias, não copiar a transcrição."
-                ),
-            },
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0.35,
-    )
-
-
-def gerar_com_ollama(prompt):
-    return chamar_ollama(prompt)
-
-
-def primeiras_frases(texto, limite):
-    frases = [
-        frase.strip()
-        for frase in re.split(r"(?<=[.!?])\s+", texto)
-        if frase.strip()
-    ]
-    return frases[:limite]
-
-
-def topicos_locais(texto):
-    frases = primeiras_frases(texto, 8)
-    if not frases and texto:
-        frases = [texto[:500]]
-    return frases
-
-
-def resumo_didatico_local(texto):
-    pontos = topicos_locais(texto)
-    if not pontos:
-        return "A transcrição não contém conteúdo suficiente para gerar um resumo didático."
-
-    return (
-        "A aula apresenta um conjunto de ideias que precisam ser organizadas para estudo. "
-        "Pelos trechos identificados na transcrição, o conteúdo gira em torno dos conceitos "
-        "mais recorrentes da fala e da relação entre eles. Em vez de repetir a transcrição, "
-        "o objetivo deste resumo é transformar a fala em uma explicação mais estruturada.\n\n"
-        "De forma didática, o estudante deve observar primeiro quais termos aparecem com mais "
-        "frequência, depois identificar como esses termos se conectam ao tema central da aula. "
-        "A partir disso, é possível revisar o conteúdo como uma sequência de ideias: definição "
-        "dos conceitos, explicação do funcionamento, exemplos e pontos que exigem atenção.\n\n"
-        "Como este resumo foi gerado localmente, sem uma IA externa, ele deve ser entendido como "
-        "uma organização inicial do material. Para uma versão mais elaborada e escrita com maior "
-        "qualidade didática, use a opção OpenAI GPT ou revise manualmente os tópicos abaixo."
-    )
-
-
-def gerar_material_local(texto, motivo="Modo local selecionado."):
-    pontos = topicos_locais(texto)
-    pontos_formatados = "\n".join(f"- {ponto}" for ponto in pontos if ponto)
-
-    texto_gerado = f"""RESUMO DA AULA
-{resumo_didatico_local(texto)}
-
-CONCEITOS IMPORTANTES
-{pontos_formatados}
-
-EXPLICAÇÃO DIDÁTICA
-O conteúdo deve ser estudado procurando transformar a fala em uma sequência lógica. Primeiro, identifique o tema central. Depois, observe os termos que se repetem e tente explicar cada um com suas próprias palavras. Por fim, relacione esses conceitos com exemplos, aplicações e possíveis perguntas de prova.
-
-FÓRMULAS E EQUAÇÕES MENCIONADAS
-Não foram identificadas automaticamente nesta versão local.
-
-EXEMPLOS PRÁTICOS
-Use os conceitos destacados para criar exemplos relacionados ao tema da aula.
-
-PONTOS DE ATENÇÃO
-- Revise possíveis erros de transcrição.
-- Confira nomes próprios, termos técnicos e fórmulas.
-- Valide os trechos importantes comparando com o áudio original.
-- Evite estudar apenas frases copiadas; transforme cada trecho em explicação.
-
-DICAS PARA PROVA
-- Priorize os termos-chave extraídos pelo sistema.
-- Revise os tópicos que aparecem repetidamente na fala.
-- Transforme cada conceito importante em uma pergunta de revisão.
-
-FLASHCARDS
-1. Qual foi o tema central da aula?
-Resposta: identifique a ideia principal que conecta os conceitos destacados.
-
-2. Quais conceitos apareceram com mais destaque?
-Resposta: consulte a seção de conceitos importantes e os termos-chave.
-
-3. Como explicar o assunto com suas próprias palavras?
-Resposta: organize definição, funcionamento e exemplo.
-
-PERGUNTAS DE REVISÃO
-1. Quais foram os principais tópicos abordados?
-2. Como os conceitos destacados se relacionam?
-3. Que exemplos poderiam representar esses conceitos?
-4. Quais trechos exigem revisão no áudio original?
-5. O que pode ser cobrado em uma avaliação sobre essa aula?
-
-RESUMO FINAL
-Este material reorganiza a transcrição em formato de estudo. O resumo foi escrito em linguagem didática e evita copiar a fala literalmente, mas deve ser revisado para aprofundar conceitos específicos.
-
-Motivo técnico:
-{motivo}
-"""
-
-    return texto_gerado, "Gerador local"
-
-
-def gerar_material(prompt, texto, ia_provider=None):
-    provedor = (ia_provider or os.environ.get("CLASSNOTE_IA_PROVIDER", "auto")).strip().lower()
-
-    if provedor == "local":
-        return gerar_material_local(texto)
-
-    if provedor == "openai":
-        try:
-            return gerar_com_openai(prompt)
-        except Exception as erro:
-            return gerar_material_local(texto, f"OpenAI indisponível: {erro}")
-
-    if provedor == "ollama":
-        try:
-            return gerar_com_ollama(prompt)
-        except Exception as erro:
-            return gerar_material_local(texto, f"Ollama indisponível: {erro}")
-
-    erro_openai = None
-    if os.environ.get("OPENAI_API_KEY"):
-        try:
-            return gerar_com_openai(prompt)
-        except Exception as erro:
-            print(f"OpenAI indisponível: {erro}")
-            erro_openai = erro
-
+def gerar_material(prompt, texto=None, ia_provider="groq", medidor=None):
+    """Gera o material exclusivamente pela Groq."""
     try:
-        return gerar_com_ollama(prompt)
-    except Exception as erro_ollama:
-        motivo = (
-            f"OpenAI indisponível: {erro_openai}; Ollama indisponível: {erro_ollama}"
-            if erro_openai is not None
-            else f"Ollama indisponível: {erro_ollama}"
+        return chamar_groq(
+            prompt,
+            temperature=0.1,
+            medidor=medidor,
+            etapa="Groq - material (resumo, questões e flashcards)",
         )
-
-    return gerar_material_local(
-        texto,
-        f"Modo automático sem IA disponível ({motivo}).",
-    )
+    except Exception as erro:
+        raise RuntimeError(f"Não foi possível gerar o material com a IA: {erro}") from erro
 
 
-def gerar_material_estudo(sufixo=None, ia_provider=None):
+def gerar_material_estudo(sufixo=None, ia_provider=None, medidor=None):
     padrao_corrigida = f"transcricao_corrigida_{sufixo}_*.txt" if sufixo else "transcricao_corrigida_*.txt"
     arquivo_transcricao = arquivo_mais_recente(padrao_corrigida)
 
@@ -257,40 +108,31 @@ def gerar_material_estudo(sufixo=None, ia_provider=None):
         arquivo_transcricao = arquivo_mais_recente(padrao_bruta)
 
     if not arquivo_transcricao:
-        print("Nenhuma transcrição encontrada.")
-        raise SystemExit(1)
+        raise RuntimeError("Nenhuma transcrição encontrada.")
 
     conteudo = arquivo_transcricao.read_text(encoding="utf-8")
-
-    print("Transcrição encontrada:")
-    print(arquivo_transcricao.name)
-
     texto = limitar_texto(extrair_corpo_transcricao(conteudo))
     num_palavras = len(texto.split())
-    print(f"\nPalavras usadas no prompt: {num_palavras}")
-
     modo, prompt = montar_prompt(texto, num_palavras)
-    print(f"\nModo {modo} ativado.")
-    print("\nGerando material de estudo...")
 
-    texto_gerado, provedor_usado = gerar_material(prompt, texto, ia_provider=ia_provider)
-    print(f"\nResposta recebida de {provedor_usado}.")
+    print(f"Modo {modo} ativado. Gerando material de estudo com Groq...")
+    texto_gerado, provedor_usado = gerar_material(
+        prompt, texto, ia_provider=ia_provider, medidor=medidor
+    )
 
     agora = datetime.now()
-    data = agora.strftime("%d/%m/%Y")
-    hora = agora.strftime("%H:%M:%S")
     timestamp = agora.strftime("%Y%m%d_%H%M%S")
-
     nome = f"material_estudo_{sufixo}_{timestamp}.txt" if sufixo else f"material_estudo_{timestamp}.txt"
     RESULTADOS_DIR.mkdir(exist_ok=True)
     arquivo_saida = RESULTADOS_DIR / nome
 
+    inicio_escrita = time.perf_counter()
     with open(arquivo_saida, "w", encoding="utf-8") as arquivo:
         arquivo.write("=" * 60 + "\n")
         arquivo.write("CLASSNOTE AI - MATERIAL DE ESTUDO\n")
         arquivo.write("=" * 60 + "\n\n")
-        arquivo.write(f"Data: {data}\n")
-        arquivo.write(f"Hora: {hora}\n\n")
+        arquivo.write(f"Data: {agora.strftime('%d/%m/%Y')}\n")
+        arquivo.write(f"Hora: {agora.strftime('%H:%M:%S')}\n\n")
         arquivo.write(f"Transcrição utilizada: {arquivo_transcricao.name}\n")
         arquivo.write(f"Quantidade de palavras no prompt: {num_palavras}\n")
         arquivo.write(f"Modo utilizado: {modo}\n")
@@ -299,10 +141,10 @@ def gerar_material_estudo(sufixo=None, ia_provider=None):
         arquivo.write("MATERIAL GERADO PELA IA\n")
         arquivo.write("=" * 60 + "\n\n")
         arquivo.write(texto_gerado)
+    if medidor:
+        medidor.registrar("Disco - escrita do material de estudo", time.perf_counter() - inicio_escrita)
 
-    print("\nArquivo salvo em:")
-    print(arquivo_saida)
-
+    print(f"Arquivo salvo em: {arquivo_saida}")
     return texto_gerado, arquivo_saida
 
 

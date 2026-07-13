@@ -1,52 +1,34 @@
-import json
 import os
-import urllib.error
-import urllib.request
+import time
+
+from groq import Groq
 
 
-def chamar_openai(mensagens, temperature=0.35, timeout=180):
-    api_key = os.environ.get("OPENAI_API_KEY")
+# Configure a chave da Groq no arquivo local .env:
+# GROQ_API_KEY=gsk_sua_chave_da_groq
+MODELO_GROQ = "llama-3.1-8b-instant"
+
+
+def chamar_groq(prompt, temperature=0.1, medidor=None, etapa="Groq - requisição + rede + inferência"):
+    """Gera conteúdo exclusivamente pela API da Groq."""
+    api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
-        raise RuntimeError("OPENAI_API_KEY não foi configurada.")
+        raise RuntimeError(
+            "GROQ_API_KEY não foi configurada. Adicione a chave gsk_ no arquivo .env."
+        )
 
-    modelo = os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
-    payload = {
-        "model": modelo,
-        "messages": mensagens,
-        "temperature": temperature,
-    }
-
-    requisicao = urllib.request.Request(
-        "https://api.openai.com/v1/chat/completions",
-        data=json.dumps(payload).encode("utf-8"),
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        },
-        method="POST",
-    )
-
-    try:
-        with urllib.request.urlopen(requisicao, timeout=timeout) as resposta:
-            dados = json.loads(resposta.read().decode("utf-8"))
-    except urllib.error.HTTPError as erro:
-        detalhe = erro.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"Erro da OpenAI API: {erro.code} - {detalhe}") from erro
-    except urllib.error.URLError as erro:
-        raise RuntimeError(f"Erro de conexão com a OpenAI API: {erro}") from erro
-
-    return dados["choices"][0]["message"]["content"].strip(), f"OpenAI ({modelo})"
-
-
-def chamar_ollama(prompt):
-    try:
-        from ollama import chat
-    except Exception as erro:
-        raise RuntimeError(f"Pacote ollama não disponível: {erro}") from erro
-
-    modelo = os.environ.get("OLLAMA_MODEL", "gemma3:1b")
-    resposta = chat(
-        model=modelo,
+    cliente_groq = Groq(api_key=api_key)
+    inicio_requisicao = time.perf_counter()
+    resposta = cliente_groq.chat.completions.create(
+        model=MODELO_GROQ,
         messages=[{"role": "user", "content": prompt}],
+        # Temperatura baixa deixa a estrutura dos cards mais estável.
+        temperature=temperature,
     )
-    return resposta["message"]["content"].strip(), f"Ollama ({modelo})"
+    if medidor:
+        medidor.registrar(etapa, time.perf_counter() - inicio_requisicao)
+
+    conteudo = resposta.choices[0].message.content
+    if not conteudo:
+        raise RuntimeError("A Groq retornou uma resposta sem conteúdo.")
+    return conteudo.strip(), f"Groq ({MODELO_GROQ})"

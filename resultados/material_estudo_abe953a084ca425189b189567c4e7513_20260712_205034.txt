@@ -1,0 +1,43 @@
+============================================================
+CLASSNOTE AI - MATERIAL DE ESTUDO
+============================================================
+
+Data: 12/07/2026
+Hora: 20:50:34
+
+Transcrição utilizada: transcricao_corrigida_abe953a084ca425189b189567c4e7513_20260712_205024.txt
+Quantidade de palavras no prompt: 1384
+Modo utilizado: AULA
+IA utilizada: Groq (llama-3.1-8b-instant)
+
+============================================================
+MATERIAL GERADO PELA IA
+============================================================
+
+=== RESUMO
+O professor está discutindo o conceito de eletro-magnetismo, destacando que o campo elétrico e o campo magnético são dois aspectos da mesma coisa. Ele explica que o campo elétrico é produzido por cargas elétricas, enquanto o campo magnético é produzido por correntes elétricas. O professor também discute a diferença entre o campo elétrico e o campo magnético, destacando que não existem monopólos magnéticos, ou seja, não existem partículas que carregam apenas um polo magnético.
+
+O professor também aborda a importância do campo magnético na Terra, destacando que ele protege a gente dos ventos-solares e que é responsável pelas auroras boreais e austrais. Ele também discute a diferença entre o polo norte geográfico e o polo norte magnético, destacando que o polo norte magnético não está estático e muda um pouco todo ano.
+
+=== CONCEITOS
+- **Campo Elétrico**: é produzido por cargas elétricas e é responsável pela força que uma carga elétrica experimenta em um campo elétrico.
+- **Campo Magnético**: é produzido por correntes elétricas e é responsável pela força que uma partícula experimenta em um campo magnético.
+- **Monopólos Magnéticos**: não existem, ou seja, não existem partículas que carregam apenas um polo magnético.
+- **Polo Norte Magnético**: é o polo magnético do campo magnético da Terra e não está estático, mudando um pouco todo ano.
+- **Polo Sul Magnético**: é o polo magnético oposto ao polo norte magnético e também não está estático, mudando um pouco todo ano.
+
+=== ATENÇÃO E PROVA
+- **Dúvidas**: o que é o campo elétrico e o campo magnético? Como são produzidos? Por que não existem monopólos magnéticos?
+- **Pegadinhas**: não confunda o polo norte geográfico com o polo norte magnético.
+- **Trechos Confusos**: o que é o campo magnético da Terra e como ele protege a gente dos ventos-solares?
+
+=== FLASHCARDS
+FRENTE: O que é o campo elétrico? | VERSO: É produzido por cargas elétricas.
+FRENTE: O que é o campo magnético? | VERSO: É produzido por correntes elétricas.
+FRENTE: Existem monopólos magnéticos? | VERSO: Não, não existem.
+FRENTE: Qual é a função do campo magnético da Terra? | VERSO: Protege a gente dos ventos-solares.
+
+=== QUESTÕES
+1. Descreva o campo elétrico e o campo magnético e como são produzidos.
+2. Explique por que não existem monopólos magnéticos.
+3. Descreva a função do campo magnético da Terra e como ele protege a gente dos ventos-solares.

@@ -1,6 +1,7 @@
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
+import time
 
 import matplotlib
 matplotlib.use("Agg")
@@ -344,7 +345,8 @@ def termo_relevante(palavra):
     return True
 
 
-def gerar_termos_chave(conteudo_transcricao, arquivo_analisado, sufixo=None):
+def gerar_termos_chave(conteudo_transcricao, arquivo_analisado, sufixo=None, medidor=None):
+    inicio = time.perf_counter()
     RESULTADOS_DIR.mkdir(exist_ok=True)
 
     texto = limpar_texto(extrair_corpo_transcricao(conteudo_transcricao))
@@ -396,9 +398,12 @@ def gerar_termos_chave(conteudo_transcricao, arquivo_analisado, sufixo=None):
             arquivo.write(f"{palavra}: {qtd}\n")
 
     linhas = [f"{palavra}: {qtd}" for palavra, qtd in top_termos]
-    return {
+    resultado = {
         "arquivo": arquivo_saida,
         "total": total_palavras,
         "unicos": palavras_unicas,
         "linhas": linhas,
     }
+    if medidor:
+        medidor.registrar("Termos-chave - extração, gráfico e escrita", time.perf_counter() - inicio)
+    return resultado
