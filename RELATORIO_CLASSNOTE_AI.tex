@@ -1,0 +1,435 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% Pacotes
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
+\usepackage[colorlinks=true, linkcolor=blue!50!black, urlcolor=blue!50!black, citecolor=blue!50!black]{hyperref}
+\usepackage{caption}
+\usepackage{fancyhdr}
+
+% ============================================================
+% Configuração de código-fonte
+% ============================================================
+\definecolor{codebg}{RGB}{246,248,250}
+\definecolor{codecomment}{RGB}{110,110,110}
+\definecolor{codekeyword}{RGB}{37,99,235}
+\definecolor{codestring}{RGB}{5,150,105}
+
+\lstdefinestyle{padrao}{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{codekeyword}\bfseries,
+    commentstyle=\color{codecomment}\itshape,
+    stringstyle=\color{codestring},
+    breaklines=true,
+    breakatwhitespace=false,
+    frame=single,
+    rulecolor=\color{black!15},
+    numbers=left,
+    numberstyle=\tiny\color{black!40},
+    numbersep=8pt,
+    xleftmargin=15pt,
+    tabsize=4,
+    showstringspaces=false,
+}
+\lstset{style=padrao}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{ClassNote AI --- Relatório Técnico}
+\lhead{\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+
+% ============================================================
+% Dados do documento
+% ============================================================
+\title{\textbf{ClassNote AI}\\[4pt]
+\large Relatório técnico do sistema de transcrição, análise\\e geração de material de estudo a partir de aulas gravadas}
+\author{Bruna S. S. Vidal de Araújo\\\textit{Instituição --- preencha aqui}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+\noindent
+O ClassNote AI é um sistema que transforma gravações de aulas (arquivos de áudio/vídeo enviados pelo usuário ou áudio gravado diretamente pelo navegador) em quatro produtos principais: uma transcrição revisada do conteúdo falado, uma análise espectral do sinal de voz, uma lista de termos-chave da aula e um material de estudo estruturado (resumo, conceitos, pontos de atenção, flashcards e questões de revisão). O sistema combina processamento digital de sinais (FFT), reconhecimento automático de fala local via \emph{faster-whisper} e geração de linguagem natural via API da Groq, expondo esse pipeline tanto por uma interface web quanto por uma aplicação desktop (PySide6). Este relatório descreve a arquitetura, o fluxo de processamento, os módulos de software, as escolhas técnicas de desempenho e as convenções de persistência de dados do sistema.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{Introdução}
+% ============================================================
+
+O \textbf{ClassNote AI} é uma aplicação voltada para estudantes que desejam converter aulas gravadas em material de estudo utilizável, sem depender de transcrição manual. A partir de um único áudio de entrada, o sistema executa um pipeline que:
+
+\begin{enumerate}[label=(\roman*)]
+    \item padroniza e limpa o sinal de áudio;
+    \item transcreve a fala para texto em português;
+    \item corrige a transcrição bruta com auxílio de um modelo de linguagem;
+    \item identifica os termos mais relevantes da aula;
+    \item analisa o conteúdo espectral do sinal de voz; e
+    \item gera, a partir da transcrição corrigida, um material de estudo estruturado (resumo, conceitos, flashcards e questões).
+\end{enumerate}
+
+O sistema foi desenhado para funcionar inteiramente em um ambiente local de CPU (sem GPU dedicada), priorizando tempo de resposta aceitável mesmo em notebooks comuns, por meio de um modelo de transcrição quantizado e paralelismo entre etapas independentes do pipeline.
+
+% ============================================================
+\section{Visão geral da arquitetura}
+% ============================================================
+
+O sistema é dividido em três camadas:
+
+\begin{itemize}
+    \item \textbf{Núcleo de processamento} (pasta \texttt{src/}): módulos Python independentes de interface, responsáveis por preparar o áudio, transcrever, corrigir texto, extrair termos-chave, calcular a FFT e gerar o material de estudo.
+    \item \textbf{Interface web} (\texttt{docs/index.html} + \texttt{src/web\_api.py}): uma página HTML/CSS/JavaScript estática servida por um backend HTTP simples, escrito com a biblioteca padrão \texttt{http.server} do Python.
+    \item \textbf{Interface desktop} (\texttt{src/gui.py}): uma aplicação Qt (PySide6) equivalente, que reaproveita os mesmos módulos do núcleo de processamento, porém executando o pipeline em uma \texttt{QThread} para não bloquear a interface gráfica.
+    \end{itemize}
+
+As duas interfaces (web e desktop) são \emph{clientes} do mesmo núcleo de processamento --- não há duplicação da lógica de transcrição, correção ou geração de material entre elas.
+
+\subsection{Pipeline de processamento}
+
+A Figura~\ref{fig:pipeline} resume o fluxo completo, desde a captura do áudio até a entrega do resultado consolidado à interface.
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[
+  box/.style={rectangle, draw, rounded corners, fill=blue!6, align=center,
+              minimum width=8.4cm, minimum height=1.05cm, font=\small, inner sep=6pt},
+  smallbox/.style={rectangle, draw, rounded corners, fill=orange!10, align=center,
+              minimum width=3.8cm, minimum height=1.05cm, font=\small, inner sep=6pt},
+  arrow/.style={-{Latex[length=2.2mm]}, thick}
+]
+
+\node[box] (audio) {Aquisição do áudio\\\footnotesize (upload de arquivo \emph{ou} gravação pelo navegador)};
+\node[box, below=0.5cm of audio] (backend) {Backend web: decodificação Base64\\\footnotesize e gravação em \texttt{audio/}};
+\node[box, below=0.5cm of backend] (ffmpeg) {FFmpeg: WAV mono, 16\,kHz, 16 bits\\\footnotesize remoção de silêncio + normalização de volume};
+
+\node[smallbox, below left=0.7cm and -1.9cm of ffmpeg] (fft) {FFT\\\footnotesize (espectro de frequência)};
+\node[smallbox, below right=0.7cm and -1.9cm of ffmpeg] (whisper) {faster-whisper\\\footnotesize (transcrição em pt)};
+
+\node[box, below=1.55cm of ffmpeg] (groq1) {Groq (llama-3.1-8b-instant)\\\footnotesize correção da transcrição bruta};
+\node[box, below=0.5cm of groq1] (termos) {Extração de termos-chave\\\footnotesize (filtro linguístico + gráfico de frequência)};
+\node[box, below=0.5cm of termos] (groq2) {Groq: geração do material de estudo\\\footnotesize resumo, conceitos, flashcards, questões};
+\node[box, below=0.5cm of groq2] (final) {Resultado consolidado\\\footnotesize (interface web ou desktop)};
+
+\draw[arrow] (audio) -- (backend);
+\draw[arrow] (backend) -- (ffmpeg);
+\draw[arrow] (ffmpeg) -- (fft);
+\draw[arrow] (ffmpeg) -- (whisper);
+\draw[arrow] (fft) |- (groq1);
+\draw[arrow] (whisper) |- (groq1);
+\draw[arrow] (groq1) -- (termos);
+\draw[arrow] (termos) -- (groq2);
+\draw[arrow] (groq2) -- (final);
+
+\end{tikzpicture}
+\caption{Pipeline de processamento do ClassNote AI. O bloco FFT e o bloco faster-whisper são executados em paralelo (\texttt{ThreadPoolExecutor} com dois trabalhadores), pois não têm dependência entre si.}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection{Comunicação entre interface web e backend}
+
+A interface web consome três rotas HTTP expostas por \texttt{web\_api.py}:
+
+\begin{itemize}
+    \item \texttt{POST /api/process} --- recebe o áudio (em Base64) e demais parâmetros em JSON, cria um identificador de tarefa (\texttt{jobId}, um \texttt{uuid4} hexadecimal) e inicia o processamento em uma \emph{thread} separada, retornando imediatamente o \texttt{jobId}.
+    \item \texttt{GET /api/status?jobId=\ldots} --- consultado por \emph{polling} (a cada 700\,ms) pelo navegador, retorna o progresso (0--100), o status textual da etapa atual e, quando disponíveis, resultados parciais já produzidos pelo pipeline.
+    \item \texttt{GET /api/latest} --- recarrega a última análise persistida em \texttt{resultados/} sem reprocessar o áudio.
+\end{itemize}
+
+Esse desenho assíncrono permite que a interface mostre progresso incremental (por exemplo, exibir a transcrição assim que ela fica pronta, mesmo antes do material de estudo terminar de ser gerado), em vez de bloquear a requisição HTTP até a conclusão de todo o pipeline.
+
+% ============================================================
+\section{Módulos do núcleo de processamento}
+% ============================================================
+
+A Tabela~\ref{tab:modulos} resume a responsabilidade de cada módulo em \texttt{src/}.
+
+\begin{longtable}{@{}p{3.6cm}p{10.8cm}@{}}
+\toprule
+\textbf{Módulo} & \textbf{Responsabilidade} \\
+\midrule
+\endhead
+\texttt{config\_env.py} & Carrega variáveis de ambiente dos arquivos \texttt{.env} e \texttt{senha.env} na raiz do projeto, sem sobrescrever variáveis já definidas no processo. \\
+\texttt{audio\_utils.py} & Localiza o executável do FFmpeg (via \texttt{PATH}, variável \texttt{CLASSNOTE\_FFMPEG\_PATH} ou caminho de \emph{fallback}) e converte/normaliza o áudio de entrada para o formato usado pelo restante do pipeline. \\
+\texttt{transcricao.py} & Carrega (padrão \emph{singleton} protegido por \emph{lock}) o modelo \emph{faster-whisper} ``base'' e realiza a transcrição do áudio processado. \\
+\texttt{correcao\_texto.py} & Corrige a transcrição bruta bloco a bloco via API da Groq, com prompt restrito a correções ortográficas/fonéticas; aplica ajuste básico de pontuação como \emph{fallback} caso a IA falhe. \\
+\texttt{termos\_chave\_core.py} & Extrai os termos mais frequentes da transcrição corrigida, aplicando filtros linguísticos, e gera o gráfico de barras correspondente. \\
+\texttt{palavras\_chave.py} & Script de linha de comando que reaproveita \texttt{termos\_chave\_core.py} sobre a transcrição mais recente em disco. \\
+\texttt{limpeza\_texto.py} & Normaliza texto (remove pontuação/caracteres especiais, força minúsculas) para a etapa de extração de termos-chave. \\
+\texttt{texto\_utils.py} & Extrai o corpo útil de um arquivo de transcrição (removendo cabeçalhos formatados) e limita o texto enviado à IA a um número máximo de palavras. \\
+\texttt{fft\_audio.py} & Calcula a Transformada Rápida de Fourier do áudio processado e gera o gráfico do espectro de frequência. \\
+\texttt{resumo\_ia.py} & Gera o material de estudo via Groq, escolhendo entre dois modos de prompt (\emph{CURTO} ou \emph{AULA}) conforme o tamanho do texto de entrada. \\
+\texttt{ia\_utils.py} & Cliente único de chamada à API da Groq (modelo \texttt{llama-3.1-8b-instant}), usado tanto pela correção de texto quanto pela geração do material de estudo. \\
+\texttt{desempenho.py} & Classe \texttt{MedidorDesempenho}: cronometra etapas do pipeline (por nome) e exporta um relatório agregado em \texttt{.txt} e \texttt{.json}. \\
+\texttt{resultados\_utils.py} & Utilitários para localizar o arquivo mais recente que casa com um padrão de nome e para converter imagens em \emph{data URLs} consumidas pelo frontend. \\
+\texttt{web\_api.py} & Servidor HTTP do backend web e orquestração completa do pipeline (upload, conversão, FFT/transcrição em paralelo, correção, termos-chave, material de estudo, relatório de desempenho). \\
+\texttt{gui.py} & Aplicação desktop (PySide6) equivalente à interface web, com o pipeline executado em uma \texttt{QThread} e exportação de PDF via \texttt{reportlab}. \\
+\texttt{leitura\_audio.py}, \texttt{plot\_tempo.py} & Scripts utilitários de apoio/depuração: leitura de metadados de um WAV e plotagem do sinal no domínio do tempo. \\
+\bottomrule
+\caption{Módulos do núcleo de processamento e suas responsabilidades.}
+\label{tab:modulos}
+\end{longtable}
+
+% ============================================================
+\section{Fluxo de processamento detalhado}
+% ============================================================
+
+\subsection{Aquisição do áudio}
+
+O sistema aceita duas formas de entrada de áudio na interface web:
+
+\begin{itemize}
+    \item \textbf{Upload de arquivo}: seleção de um arquivo de áudio ou vídeo (\texttt{input[type=file]}, aceitando \texttt{audio/*} e \texttt{video/*}) já existente no dispositivo do usuário.
+    \item \textbf{Gravação ao vivo pelo navegador}: um botão dedicado inicia a captura do microfone via \texttt{MediaRecorder API}. A gravação é cronometrada na tela, pode ser interrompida a qualquer momento e, ao finalizar, gera um arquivo com nome específico no padrão \texttt{gravacao\_AAAAMMDD\_HHMMSS.\emph{ext}} (a extensão --- \texttt{webm}, \texttt{ogg} ou \texttt{m4a} --- depende do formato de gravação suportado pelo navegador). Um botão adicional \emph{``Apagar áudio''} permite cancelar uma gravação em andamento ou descartar uma gravação/arquivo já selecionado, retornando a interface ao estado inicial (nenhum áudio selecionado).
+\end{itemize}
+
+Em ambos os casos, o conteúdo do áudio é convertido para Base64 no navegador e enviado por \texttt{POST} em JSON para a rota \texttt{/api/process}. No backend, o conteúdo é decodificado e persistido em \texttt{audio/upload\_web\_\emph{timestamp}\_\emph{nome-original}}, que é removido do disco ao final do processamento (o áudio já convertido permanece salvo separadamente).
+
+\subsection{Pré-processamento com FFmpeg}
+
+O áudio recebido --- em qualquer formato suportado pelo FFmpeg --- é convertido para um WAV padronizado antes de qualquer outra etapa:
+
+\begin{lstlisting}[language=bash, caption={Parâmetros de conversão usados em \texttt{audio\_utils.preparar\_audio}.}]
+ffmpeg -y -i <origem> -vn -ac 1 -ar 16000 \
+  -af "silenceremove=start_periods=1:start_duration=0.35:start_threshold=-45dB:
+       stop_periods=-1:stop_duration=0.8:stop_threshold=-45dB,
+       loudnorm=I=-18:TP=-2:LRA=11" \
+  -sample_fmt s16 <destino.wav>
+\end{lstlisting}
+
+As escolhas de formato não são arbitrárias:
+
+\begin{itemize}
+    \item \textbf{Mono, 16\,kHz, PCM 16 bits}: é exatamente a taxa de amostragem e a codificação nativas esperadas pelo Whisper. Enviar o áudio já nesse formato evita reamostragem interna pelo modelo, tornando a etapa de transcrição mais rápida.
+    \item \textbf{Remoção de silêncio} (\texttt{silenceremove}): elimina trechos de silêncio no início e entre falas (limiar de $-45$\,dB), reduzindo a quantidade de áudio que precisa ser processada pelo modelo de transcrição.
+    \item \textbf{Normalização de volume} (\texttt{loudnorm}, padrão EBU R128): ajusta a faixa dinâmica para \emph{loudness} integrado de $-18$\,LUFS, pico verdadeiro máximo de $-2$\,dBTP e faixa de \emph{loudness} de 11\,LU, tornando o reconhecimento de fala mais robusto a gravações com volume muito baixo ou muito alto.
+\end{itemize}
+
+Caso o FFmpeg não seja localizado no sistema, o \emph{pipeline} ainda aceita diretamente arquivos já em WAV (cópia direta para o destino); qualquer outro formato sem FFmpeg disponível resulta em erro orientando a instalação da ferramenta ou a configuração da variável de ambiente \texttt{CLASSNOTE\_FFMPEG\_PATH}.
+
+\subsection{Transcrição de voz}
+
+A transcrição é feita localmente com a biblioteca \textbf{faster-whisper} (reimplementação do Whisper sobre o \emph{runtime} \texttt{CTranslate2}, otimizada para inferência em CPU). O modelo é carregado uma única vez por processo (padrão \emph{singleton} protegido por \texttt{threading.Lock}) e reaproveitado entre requisições subsequentes, evitando o custo de recarregar os pesos a cada áudio.
+
+\begin{lstlisting}[language=Python, caption={Configuração do modelo e da chamada de transcrição (\texttt{transcricao.py}).}]
+WhisperModel(
+    "base",
+    device="cpu",
+    compute_type="int8",       # quantizacao: menos RAM, mais velocidade em CPU
+    cpu_threads=obter_threads_ideais(),
+)
+
+modelo.transcribe(
+    caminho_audio,
+    language="pt",              # evita deteccao automatica de idioma
+    beam_size=2,                 # busca em feixe reduzida
+    condition_on_previous_text=False,
+    vad_filter=True,             # ignora silencio/ruido de fundo
+)
+\end{lstlisting}
+
+O número de \emph{threads} usado pelo \texttt{CTranslate2} é estimado como metade do número de núcleos lógicos da máquina (\texttt{os.cpu\_count() // 2}), buscando aproximar o número de núcleos físicos e evitar contenção por \emph{Hyper-Threading}.
+
+\subsection{Correção da transcrição via IA}
+
+A transcrição bruta do Whisper frequentemente contém erros fonéticos (palavras trocadas por sons parecidos) e pontuação ausente. Essa etapa usa a API da \textbf{Groq} (modelo \texttt{llama-3.1-8b-instant}, temperatura $0{,}1$) para corrigir o texto \emph{linha a linha}, com um \emph{prompt} que restringe explicitamente o modelo a:
+
+\begin{enumerate}
+    \item corrigir apenas erros óbvios de ortografia, pontuação e trocas fonéticas;
+    \item nunca resumir, parafrasear ou alterar o sentido do texto;
+    \item preservar termos técnicos quando houver incerteza.
+\end{enumerate}
+
+Se a chamada à API falhar (por exemplo, chave não configurada ou indisponibilidade do serviço), o sistema recorre a um ajuste básico de pontuação local (capitalização da primeira letra e inserção de ponto final), garantindo que o \emph{pipeline} sempre produza uma transcrição utilizável, mesmo sem IA externa disponível.
+
+\subsection{Extração de termos-chave}
+
+Os termos-chave são obtidos por contagem de frequência sobre a transcrição corrigida, após uma etapa de filtragem linguística implementada manualmente (sem dependência de bibliotecas de PLN externas):
+
+\begin{itemize}
+    \item normalização do texto (remoção de pontuação e símbolos, conversão para minúsculas);
+    \item exclusão de palavras com menos de quatro caracteres;
+    \item exclusão de listas de \emph{stopwords}, pronomes, palavras informais (gírias) e verbos comuns previamente catalogados;
+    \item exclusão de números;
+    \item exclusão de palavras terminadas em sufixos verbais típicos (\texttt{-ando}, \texttt{-endo}, \texttt{-indo}, \texttt{-aria}, \texttt{-eram}, entre outros), como heurística adicional para descartar formas verbais não capturadas pelas listas fixas.
+\end{itemize}
+
+Os 12 termos mais frequentes resultantes são exportados em um arquivo de texto e em um gráfico de barras (frequência por termo).
+
+\subsection{Análise espectral (FFT)}
+
+Em paralelo à transcrição, o sistema calcula o espectro de frequência do áudio processado:
+
+\begin{enumerate}
+    \item leitura do WAV processado e conversão para mono (média dos canais, se estéreo);
+    \item remoção do nível DC (subtração da média do sinal);
+    \item cálculo da Transformada Rápida de Fourier real (\texttt{numpy.fft.rfft}) e das frequências correspondentes (\texttt{numpy.fft.rfftfreq});
+    \item geração de um gráfico de magnitude em função da frequência.
+\end{enumerate}
+
+Do ponto de vista teórico, a Transformada Discreta de Fourier (DFT) de um sinal discreto $x[n]$ de comprimento $N$ é definida por:
+
+\begin{equation}
+X[k] = \sum_{n=0}^{N-1} x[n]\, e^{-j\frac{2\pi}{N}kn}, \qquad k = 0, 1, \ldots, N-1
+\label{eq:dft}
+\end{equation}
+
+O cálculo direto da Equação~\ref{eq:dft} tem complexidade $O(N^2)$. O algoritmo FFT (\emph{Fast Fourier Transform}), implementado internamente pelo \texttt{numpy}, reduz esse custo para $O(N \log N)$ ao explorar recursivamente a periodicidade dos fatores $e^{-j2\pi kn/N}$, o que é essencial para viabilizar o cálculo em tempo interativo mesmo para sinais de áudio com centenas de milhares de amostras.
+
+\subsection{Geração do material de estudo}
+
+A partir da transcrição corrigida, a Groq é utilizada novamente --- desta vez com um \emph{prompt} de geração de conteúdo didático --- para produzir o material de estudo final. O sistema escolhe automaticamente entre dois modos de \emph{prompt}, de acordo com o número de palavras do texto de entrada:
+
+\begin{itemize}
+    \item \textbf{Modo CURTO} (menos de 50 palavras): produz apenas um texto corrigido, uma interpretação da mensagem e observações úteis --- adequado para trechos muito curtos, em que não faz sentido gerar resumo/flashcards completos.
+    \item \textbf{Modo AULA} (50 palavras ou mais): produz um material completo, estruturado em blocos delimitados por \texttt{===}, contendo:
+    \begin{itemize}
+        \item \texttt{RESUMO} --- síntese do assunto central da aula;
+        \item \texttt{CONCEITOS} --- conceitos centrais, explicações passo a passo, exemplos e fórmulas citadas;
+        \item \texttt{ATENÇÃO E PROVA} --- pontos de dúvida, trechos confusos e o que é mais relevante estudar;
+        \item \texttt{FLASHCARDS} --- de 2 a 4 cartões no formato \texttt{FRENTE: \ldots\ | VERSO: \ldots};
+        \item \texttt{QUESTÕES} --- até 3 perguntas discursivas de revisão.
+    \end{itemize}
+\end{itemize}
+
+Antes do envio, o texto é limitado a no máximo 3500 palavras (\texttt{texto\_utils.limitar\_texto}), como salvaguarda de custo e de limite de contexto da API. O resultado é salvo em disco como texto estruturado e, na interface web, é interpretado (\emph{parseado}) em tempo de execução para montar cartões visuais e flashcards interativos (com efeito de virar o cartão ao clicar).
+
+\subsection{Medição de desempenho}
+
+Todas as etapas relevantes do \emph{pipeline} são cronometradas pela classe \texttt{MedidorDesempenho} (\texttt{desempenho.py}), que oferece duas formas de uso: um \emph{context manager} (\texttt{with medidor.etapa("nome"):}) para blocos inteiros, e um método direto \texttt{registrar(nome, segundos)} para medições pontuais (por exemplo, tempo de uma chamada individual à Groq).
+
+Ao final do processamento, é gerado um relatório com o tempo total decorrido, o tempo agregado por etapa, o número de chamadas de cada etapa e o percentual de tempo que cada etapa representa sobre o total --- exportado tanto em texto legível quanto em JSON estruturado, salvos em \texttt{resultados/desempenho\_\emph{sufixo}\_\emph{timestamp}.\{txt,json\}}.
+
+Como otimização de tempo de parede, o cálculo da FFT e a transcrição via Whisper --- que não têm dependência de dados entre si --- são executados em paralelo usando \texttt{concurrent.futures.ThreadPoolExecutor} com dois trabalhadores.
+
+% ============================================================
+\section{Interface web}
+% ============================================================
+
+A interface web (\texttt{docs/index.html}) é uma página única, sem \emph{frameworks} de frontend, que se comunica com o backend via \texttt{fetch}. Ela é organizada em cinco abas de resultado:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Aba} & \textbf{Conteúdo} \\
+\midrule
+Sinal & Metadados do áudio processado (duração, taxa de amostragem, canais, amostras). \\
+FFT & Gráfico do espectro de frequência do sinal de voz. \\
+Termos-chave & Gráfico e lista dos termos mais frequentes da aula. \\
+Transcrição & Texto reconhecido pelo Whisper e corrigido pela IA. \\
+Material & Resumo, conceitos, pontos de atenção, flashcards e questões, com exportação em PDF. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Destaques de implementação:
+
+\begin{itemize}
+    \item \textbf{Barra de progresso com avanço simulado} (``\emph{creep}''): entre duas atualizações reais de progresso vindas do \emph{polling} de \texttt{/api/status}, a barra avança suavemente até um teto próximo do próximo valor conhecido, evitando a sensação de travamento durante etapas mais longas (como a transcrição).
+    \item \textbf{Resultados parciais}: à medida que cada etapa do \emph{pipeline} termina (preparo do áudio, FFT, transcrição, correção, termos-chave, material), o backend publica um resultado parcial consultável pela mesma rota de status, permitindo que a interface mostre, por exemplo, a transcrição assim que ela fica pronta.
+    \item \textbf{Gravação de áudio pelo navegador}: implementada com a \texttt{MediaRecorder API}, com seleção do melhor formato suportado pelo navegador (\texttt{audio/webm;codecs=opus}, \texttt{audio/webm}, \texttt{audio/ogg;codecs=opus} ou \texttt{audio/mp4}, nessa ordem de preferência), cronômetro em tempo real, prévia de reprodução e botão de cancelamento/descarte que retorna a interface ao estado inicial.
+    \item \textbf{Exportação em PDF}: o material de estudo já renderizado em cartões é reaproveitado (não o texto bruto) para montar uma janela de impressão do navegador, que o usuário salva como PDF.
+    \item \textbf{Carregamento de resultados salvos}: um botão dedicado recarrega a última análise persistida em \texttt{resultados/} via \texttt{GET /api/latest}, sem necessidade de reprocessar um áudio.
+\end{itemize}
+
+% ============================================================
+\section{Interface desktop}
+% ============================================================
+
+A aplicação desktop (\texttt{src/gui.py}), construída com \textbf{PySide6}, oferece um fluxo equivalente ao da interface web, porém como um executável local com seleção de arquivo via diálogo nativo do sistema operacional. O processamento roda em uma \texttt{QThread} (\texttt{Worker}), que emite sinais de progresso, mensagens de log e status para a janela principal, mantendo a interface responsiva durante o \emph{pipeline}.
+
+Além das abas equivalentes às da interface web (Sinal, FFT, Termos-chave, Transcrição, Material), a versão desktop inclui uma aba adicional, \textbf{Matemática}, com uma explicação textual resumida do processamento de sinais utilizado (sinal no domínio do tempo, DFT, complexidade da FFT e papel do Whisper e da Groq no \emph{pipeline}). A aplicação desktop também permite salvar a transcrição editada manualmente e emitir o material de estudo diretamente como PDF, usando a biblioteca \textbf{ReportLab}.
+
+% ============================================================
+\section{Convenções de persistência e nomenclatura}
+% ============================================================
+
+O sistema não utiliza banco de dados: todas as entradas e saídas do \emph{pipeline} são arquivos em disco, organizados em duas pastas na raiz do projeto (\texttt{audio/} e \texttt{resultados/}), com nomes padronizados por \emph{timestamp} (\texttt{AAAAMMDD\_HHMMSS}) e, quando o processamento é disparado pela interface web, um sufixo adicional correspondente ao \texttt{jobId} da requisição --- o que permite identificar de forma inequívoca a qual processamento cada arquivo de saída pertence, mesmo com múltiplas requisições concorrentes.
+
+\begin{longtable}{@{}p{6.4cm}p{7.6cm}@{}}
+\toprule
+\textbf{Padrão de nome} & \textbf{Conteúdo} \\
+\midrule
+\endhead
+\texttt{audio/upload\_web\_\emph{timestamp}\_\emph{nome-original}} & Áudio bruto recebido pelo backend web (removido após o processamento). \\
+\texttt{audio/gravacao\_\emph{timestamp}.\emph{ext}} & Nome atribuído no navegador a um áudio gravado ao vivo, antes do envio. \\
+\texttt{audio/aula\_\emph{jobId}.wav} (ou \texttt{aula.wav}) & Áudio já convertido pelo FFmpeg (mono, 16\,kHz, 16 bits), usado por todas as etapas seguintes. \\
+\texttt{resultados/transcricao\_\emph{sufixo}\_\emph{timestamp}.txt} & Transcrição bruta produzida pelo Whisper. \\
+\texttt{resultados/transcricao\_corrigida\_\emph{sufixo}\_\emph{timestamp}.txt} & Transcrição após correção pela IA (ou ajuste básico de pontuação). \\
+\texttt{resultados/palavras\_chave\_\emph{sufixo}\_\emph{timestamp}.txt} & Lista dos termos-chave mais frequentes. \\
+\texttt{resultados/grafico\_palavras\_\emph{sufixo}\_\emph{timestamp}.png} & Gráfico de frequência dos termos-chave. \\
+\texttt{resultados/espectro\_\emph{sufixo}\_\emph{timestamp}.png} & Gráfico do espectro de frequência (FFT). \\
+\texttt{resultados/material\_estudo\_\emph{sufixo}\_\emph{timestamp}.txt} & Material de estudo gerado pela IA. \\
+\texttt{resultados/desempenho\_\emph{sufixo}\_\emph{timestamp}.txt} / \texttt{.json} & Relatório de desempenho do processamento. \\
+\bottomrule
+\caption{Convenção de nomenclatura dos arquivos gerados pelo sistema.}
+\label{tab:nomenclatura}
+\end{longtable}
+
+% ============================================================
+\section{Configuração e segurança}
+% ============================================================
+
+\subsection{Variáveis de ambiente}
+
+\begin{center}
+\begin{tabular}{@{}p{4.6cm}p{9cm}@{}}
+\toprule
+\textbf{Variável} & \textbf{Uso} \\
+\midrule
+\texttt{GROQ\_API\_KEY} & Chave de acesso à API da Groq, obrigatória para as etapas de correção de transcrição e geração de material de estudo. Carregada de \texttt{.env} ou \texttt{senha.env} na raiz do projeto. \\
+\texttt{CLASSNOTE\_FFMPEG\_PATH} & Caminho alternativo para o executável do FFmpeg, usado quando ele não está no \texttt{PATH} do sistema. \\
+\texttt{CLASSNOTE\_WEB\_HOST} / \texttt{CLASSNOTE\_WEB\_PORT} & Endereço e porta em que o servidor web do backend escuta (padrão: \texttt{127.0.0.1:8000}). \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Observações de segurança}
+
+\begin{itemize}
+    \item O backend libera CORS de forma irrestrita (\texttt{Access-Control-Allow-Origin: *}), adequado para uso local/didático, mas que exigiria revisão antes de qualquer exposição pública do serviço.
+    \item Não há autenticação nas rotas da API; qualquer cliente com acesso à porta do servidor pode disparar processamentos.
+    \item Tarefas (\texttt{jobs}) em memória são retidas por até 6 horas após a conclusão (\texttt{RETENCAO\_JOBS}), sendo removidas automaticamente ao final de cada nova requisição processada, para evitar crescimento indefinido de memória.
+    \item Arquivos de áudio originais enviados por upload são removidos do disco ao final do processamento; o áudio já convertido (WAV padronizado) permanece.
+\end{itemize}
+
+% ============================================================
+\section{Limitações e trabalhos futuros}
+% ============================================================
+
+\begin{itemize}
+    \item \textbf{Persistência em arquivos}: a ausência de um banco de dados dificulta consultas históricas mais ricas (por exemplo, listar todas as aulas processadas por um usuário) e a limpeza dos diretórios \texttt{audio/} e \texttt{resultados/} é manual.
+    \item \textbf{Modelo de transcrição fixo}: embora a interface exiba um seletor de modelo Whisper, apenas o modelo \texttt{base} (quantizado em int8) está de fato implementado; outros tamanhos de modelo exigiriam alterações em \texttt{transcricao.py}.
+    \item \textbf{Dependência de um único provedor de IA}: tanto a correção de transcrição quanto a geração de material de estudo dependem exclusivamente da API da Groq, sem um provedor alternativo em caso de indisponibilidade (o sistema recorre apenas a um \emph{fallback} local simplificado, sem geração de conteúdo).
+    \item \textbf{Sem autenticação/CORS restrito}: como descrito na Seção~7.2, a API não é adequada, no estado atual, para exposição em ambiente de produção multiusuário sem ajustes de segurança.
+    \item \textbf{Processamento single-node}: todo o \emph{pipeline} roda no mesmo processo/máquina que recebe a requisição, sem fila de tarefas distribuída, o que limita a escalabilidade horizontal.
+\end{itemize}
+
+% ============================================================
+\section{Conclusão}
+% ============================================================
+
+O ClassNote AI integra, em um único \emph{pipeline} local, técnicas de processamento digital de sinais (FFT), reconhecimento automático de fala otimizado para CPU (\emph{faster-whisper}) e modelos de linguagem via API (Groq) para transformar uma gravação de aula em material de estudo estruturado, com duas interfaces de uso (web e desktop) que compartilham o mesmo núcleo de processamento. As principais decisões de engenharia --- padronização do áudio no formato nativo do Whisper, paralelismo entre FFT e transcrição, medição explícita de desempenho por etapa e persistência simples baseada em arquivos nomeados de forma rastreável --- priorizam um equilíbrio entre simplicidade de implementação e tempo de resposta aceitável em hardware comum, sem exigir infraestrutura de servidor dedicada.
+
+\end{document}
