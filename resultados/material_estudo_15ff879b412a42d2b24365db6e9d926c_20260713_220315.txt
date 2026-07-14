@@ -1,0 +1,49 @@
+============================================================
+CLASSNOTE AI - MATERIAL DE ESTUDO
+============================================================
+
+Data: 13/07/2026
+Hora: 22:03:15
+
+Transcrição utilizada: transcricao_corrigida_15ff879b412a42d2b24365db6e9d926c_20260713_220312.txt
+Quantidade de palavras no prompt: 154
+Modo utilizado: AULA
+IA utilizada: Groq (llama-3.1-8b-instant)
+
+============================================================
+MATERIAL GERADO PELA IA
+============================================================
+
+=== RESUMO
+A lei dos cossenos é uma fórmula matemática que relaciona os lados e ângulos de um triângulo. Ela é fundamental para calcular a extensão de um lado de um triângulo quando se conhece a extensão dos outros dois lados e o ângulo oposto ao lado desconhecido. A lei de Pitágoras é uma aplicação específica da lei dos cossenos, onde o ângulo oposto é de 90 graus, o que simplifica a fórmula.
+
+A lei dos cossenos é expressa pela fórmula: a² = b² + c² - 2bc * cos(α), onde a é o lado oposto ao ângulo α, b e c são os outros dois lados do triângulo e α é o ângulo oposto ao lado a. A lei de Pitágoras é uma simplificação dessa fórmula, onde cos(α) é igual a 0, o que resulta em a² = b² + c².
+
+A lei de Pitágoras tem muitas aplicações práticas, como a construção de triângulos retângulos e a resolução de problemas de geometria.
+
+=== CONCEITOS
+- **Lei dos cossenos**: a² = b² + c² - 2bc * cos(α)
+- **Lei de Pitágoras**: a² = b² + c² (aplicação específica da lei dos cossenos quando α = 90 graus)
+- **Triângulo retângulo**: um triângulo com um ângulo de 90 graus.
+- **Cosseno**: uma função trigonométrica que relaciona os ângulos e lados de um triângulo.
+
+Exemplo prático: Se você tem um triângulo com lados de 3, 4 e 5 unidades, e você quer saber a extensão do lado oposto ao ângulo de 90 graus, você pode usar a lei de Pitágoras: a² = 3² + 4² = 9 + 16 = 25, então a = √25 = 5 unidades.
+
+=== ATENÇÃO E PROVA
+- **Dúvidas**: O que é a lei dos cossenos? Como é aplicada a lei de Pitágoras?
+- **Pegadinhas**: Não confunda a lei dos cossenos com a lei de Pitágoras. A lei de Pitágoras é uma aplicação específica da lei dos cossenos.
+- **Trechos confusos**: A fórmula da lei dos cossenos pode parecer complicada, mas é importante entender que é uma extensão da lei de Pitágoras.
+- **O que é mais importante estudar para a prova**: A lei dos cossenos e a lei de Pitágoras são fundamentais para a prova. É importante entender a fórmula e como aplicá-la a diferentes problemas.
+
+=== FLASHCARDS
+FRENTE: O que é a lei dos cossenos? | VERSO: A lei dos cossenos é uma fórmula matemática que relaciona os lados e ângulos de um triângulo.
+FRENTE: Qual é a aplicação específica da lei dos cossenos quando α = 90 graus? | VERSO: A lei de Pitágoras.
+FRENTE: Qual é a fórmula da lei de Pitágoras? | VERSO: a² = b² + c².
+
+=== QUESTÕES
+1. Qual é a fórmula da lei dos cossenos?
+Resposta: a² = b² + c² - 2bc * cos(α)
+2. Qual é a aplicação específica da lei dos cossenos quando α = 90 graus?
+Resposta: A lei de Pitágoras.
+3. Qual é o exemplo prático da lei de Pitágoras?
+Resposta: Se você tem um triângulo com lados de 3, 4 e 5 unidades, e você quer saber a extensão do lado oposto ao ângulo de 90 graus, você pode usar a lei de Pitágoras: a² = 3² + 4² = 9 + 16 = 25, então a = √25 = 5 unidades.

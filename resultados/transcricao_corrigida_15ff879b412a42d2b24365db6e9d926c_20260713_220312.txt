@@ -1,0 +1,15 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+Data: 13/07/2026
+Hora: 22:03:12
+
+Arquivo analisado: transcricao_15ff879b412a42d2b24365db6e9d926c_20260713_220310.txt
+Método de correção: Groq (llama-3.1-8b-instant)
+
+============================================================
+TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+"Boa tarde, gente, meu nome é Maravitora e hoje eu vou ensinar para vocês sobre a lei dos cossenos e, mais especificamente, vou falar sobre a lei de Pitágoras. Bom, a lei dos cossenos, você tem que, quando você tem um triângulo, o lado oposto ao quadrado vai ser igual a soma do quadrado dos outros dois lados, menos duas vezes os dois lados, vezes o cosseno do ângulo oposto ao outro lado. Essa é a lei dos cossenos e aí, se você pensa em um caso mais específico no qual o ângulo oposto é 90 graus, o cosseno desse ângulo vai ser igual a 0. Então, a lei vai se simplificar para o lado quadrado, igual a só um dos outros dois lados ao quadrado, que é a lei de Pitágoras. A lei de Pitágoras tem muitas aplicações, a gente tem os triângulos Pitagóricos, 3, 4, 7 e 11, e é isso, vamos.".

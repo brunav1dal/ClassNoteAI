@@ -232,6 +232,60 @@
       margin-top: 14px;
     }
 
+    .record-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .record-button {
+      width: auto;
+      min-width: 190px;
+    }
+
+    .record-button.recording {
+      background: var(--rose);
+      border-color: var(--rose);
+      color: #ffffff;
+      animation: pulse-record 1.4s ease-in-out infinite;
+    }
+
+    .clear-audio-button {
+      width: auto;
+      min-width: 130px;
+      background: #ffffff;
+      color: var(--rose);
+      border-color: #fecdd3;
+    }
+
+    .clear-audio-button:hover {
+      background: #fff1f2;
+      border-color: var(--rose);
+    }
+
+    @keyframes pulse-record {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, .35); }
+      50% { box-shadow: 0 0 0 8px rgba(225, 29, 72, 0); }
+    }
+
+    .record-timer {
+      font-weight: 800;
+      color: var(--rose);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .record-status {
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .recording-preview {
+      width: 100%;
+      max-width: 320px;
+    }
+
     .primary {
       background: linear-gradient(135deg, var(--blue), var(--purple));
       border-color: var(--blue);
@@ -577,6 +631,14 @@
         </label>
       </div>
 
+      <div class="record-row">
+        <button id="recordButton" class="secondary record-button" type="button">Gravar áudio agora</button>
+        <button id="clearAudioButton" class="clear-audio-button" type="button" hidden>Apagar áudio</button>
+        <span id="recordTimer" class="record-timer" hidden>00:00</span>
+        <span id="recordStatus" class="record-status">Ou grave direto do microfone, sem precisar de arquivo.</span>
+        <audio id="recordingPreview" class="recording-preview" controls hidden></audio>
+      </div>
+
       <div class="actions">
         <button id="processButton" class="primary" type="button">Processar aula</button>
         <button id="latestButton" class="secondary" type="button">Carregar resultados salvos</button>
@@ -637,6 +699,11 @@
     const progressBar = document.querySelector("#progressBar");
     const content = document.querySelector("#content");
     const tabButtons = document.querySelectorAll("[data-tab]");
+    const recordButton = document.querySelector("#recordButton");
+    const clearAudioButton = document.querySelector("#clearAudioButton");
+    const recordTimer = document.querySelector("#recordTimer");
+    const recordStatus = document.querySelector("#recordStatus");
+    const recordingPreview = document.querySelector("#recordingPreview");
 
     let selectedFile = null;
     let currentTab = "signal";
@@ -675,6 +742,196 @@
     function sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
+
+    // Ordem de preferência: opus/webm é o que os navegadores gravam nativamente
+    // e o ffmpeg do backend converte bem para o WAV mono 16kHz que o Whisper usa.
+    const MIME_CANDIDATES = [
+      "audio/webm;codecs=opus",
+      "audio/webm",
+      "audio/ogg;codecs=opus",
+      "audio/mp4"
+    ];
+
+    let mediaStream = null;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let recordingStartedAt = 0;
+    let recordingTimerId = null;
+    let gravacaoCancelada = false;
+
+    function pickMimeType() {
+      if (typeof MediaRecorder === "undefined") return "";
+      return MIME_CANDIDATES.find((tipo) => MediaRecorder.isTypeSupported(tipo)) || "";
+    }
+
+    function extensaoParaMime(mimeType) {
+      if (mimeType.includes("ogg")) return "ogg";
+      if (mimeType.includes("mp4")) return "m4a";
+      return "webm";
+    }
+
+    function timestampArquivo() {
+      const agora = new Date();
+      const par = (n) => String(n).padStart(2, "0");
+      return `${agora.getFullYear()}${par(agora.getMonth() + 1)}${par(agora.getDate())}_${par(agora.getHours())}${par(agora.getMinutes())}${par(agora.getSeconds())}`;
+    }
+
+    function formatarDuracao(segundosTotais) {
+      const segundos = Math.floor(segundosTotais % 60);
+      const minutos = Math.floor(segundosTotais / 60);
+      return `${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`;
+    }
+
+    function atualizarCronometro() {
+      const decorrido = (Date.now() - recordingStartedAt) / 1000;
+      recordTimer.textContent = formatarDuracao(decorrido);
+    }
+
+    function pararTrilhasMicrofone() {
+      if (!mediaStream) return;
+      mediaStream.getTracks().forEach((trilha) => trilha.stop());
+      mediaStream = null;
+    }
+
+    async function iniciarGravacao() {
+      if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+        recordStatus.textContent = "Este navegador não permite gravar áudio pelo microfone.";
+        return;
+      }
+
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({audio: true});
+      } catch (erro) {
+        recordStatus.textContent = `Não foi possível acessar o microfone: ${erro.message}`;
+        return;
+      }
+
+      const mimeType = pickMimeType();
+      recordedChunks = [];
+
+      try {
+        mediaRecorder = mimeType ? new MediaRecorder(mediaStream, {mimeType}) : new MediaRecorder(mediaStream);
+      } catch (erro) {
+        recordStatus.textContent = `Não foi possível iniciar a gravação: ${erro.message}`;
+        pararTrilhasMicrofone();
+        return;
+      }
+
+      mediaRecorder.addEventListener("dataavailable", (evento) => {
+        if (evento.data && evento.data.size > 0) recordedChunks.push(evento.data);
+      });
+      mediaRecorder.addEventListener("stop", finalizarGravacao);
+
+      mediaRecorder.start();
+      recordingStartedAt = Date.now();
+      recordTimer.hidden = false;
+      recordTimer.textContent = "00:00";
+      recordingTimerId = setInterval(atualizarCronometro, 250);
+
+      recordButton.textContent = "Parar gravação";
+      recordButton.classList.add("recording");
+      recordStatus.textContent = "Gravando... fale perto do microfone.";
+      fileInput.disabled = true;
+      processButton.disabled = true;
+      recordingPreview.hidden = true;
+      clearAudioButton.hidden = false;
+    }
+
+    function pararGravacao() {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+    }
+
+    // Reseta tudo para o estado inicial: nenhum arquivo escolhido, nenhuma
+    // gravação pendente. Usado tanto ao cancelar uma gravação em andamento
+    // quanto ao apagar uma gravação/arquivo já selecionado.
+    function resetarEstadoAudio() {
+      selectedFile = null;
+      fileInput.value = "";
+      lastResult = null;
+      hideCompleteMessage();
+      resetProgress();
+
+      if (recordingPreview.src) {
+        URL.revokeObjectURL(recordingPreview.src);
+      }
+      recordingPreview.src = "";
+      recordingPreview.hidden = true;
+      recordTimer.hidden = true;
+      recordTimer.textContent = "00:00";
+      recordStatus.textContent = "Ou grave direto do microfone, sem precisar de arquivo.";
+      clearAudioButton.hidden = true;
+
+      statusText.textContent = "Status: aguardando áudio";
+      renderTab();
+    }
+
+    function apagarAudio() {
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        gravacaoCancelada = true;
+        mediaRecorder.stop();
+        return;
+      }
+      resetarEstadoAudio();
+    }
+
+    function finalizarGravacao() {
+      clearInterval(recordingTimerId);
+      recordingTimerId = null;
+      pararTrilhasMicrofone();
+
+      recordButton.textContent = "Gravar áudio agora";
+      recordButton.classList.remove("recording");
+      fileInput.disabled = false;
+
+      if (gravacaoCancelada) {
+        gravacaoCancelada = false;
+        recordedChunks = [];
+        resetarEstadoAudio();
+        return;
+      }
+
+      const duracaoSegundos = (Date.now() - recordingStartedAt) / 1000;
+
+      if (!recordedChunks.length) {
+        recordStatus.textContent = "Nenhum áudio capturado. Tente gravar novamente.";
+        recordTimer.hidden = true;
+        clearAudioButton.hidden = true;
+        return;
+      }
+
+      const mimeType = mediaRecorder.mimeType || "audio/webm";
+      const blob = new Blob(recordedChunks, {type: mimeType});
+      const extensao = extensaoParaMime(mimeType);
+      // Nome específico e rastreável: prefixo fixo + timestamp da gravação,
+      // igual ao padrão que o backend já usa para os áudios enviados por upload.
+      const nomeArquivo = `gravacao_${timestampArquivo()}.${extensao}`;
+      const arquivoGravado = new File([blob], nomeArquivo, {type: mimeType});
+
+      selectedFile = arquivoGravado;
+      lastResult = null;
+      hideCompleteMessage();
+      resetProgress();
+
+      recordingPreview.src = URL.createObjectURL(blob);
+      recordingPreview.hidden = false;
+      recordStatus.textContent = `Gravação pronta: ${nomeArquivo} (${formatarDuracao(duracaoSegundos)})`;
+      statusText.textContent = "Status: gravação pronta para processar";
+      processButton.disabled = false;
+      clearAudioButton.hidden = false;
+      renderTab();
+    }
+
+    recordButton.addEventListener("click", () => {
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        pararGravacao();
+      } else {
+        iniciarGravacao();
+      }
+    });
+
+    clearAudioButton.addEventListener("click", apagarAudio);
 
     function updateCalendar() {
       const now = new Date();
@@ -1127,6 +1384,14 @@
       lastResult = null;
       hideCompleteMessage();
       resetProgress();
+      if (recordingPreview.src) {
+        URL.revokeObjectURL(recordingPreview.src);
+        recordingPreview.src = "";
+      }
+      recordingPreview.hidden = true;
+      recordTimer.hidden = true;
+      recordStatus.textContent = "Ou grave direto do microfone, sem precisar de arquivo.";
+      clearAudioButton.hidden = !selectedFile;
       statusText.textContent = `Status: ${selectedFile ? "arquivo selecionado" : "aguardando áudio"}`;
       renderTab();
     });
