@@ -1,0 +1,15 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+Data: 14/07/2026
+Hora: 10:33:17
+
+Arquivo analisado: transcricao_ebea2e6c124c49a2944c7142b072b4e1_20260714_103315.txt
+Método de correção: Groq (llama-3.1-8b-instant)
+
+============================================================
+TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+"O pessoal, meu nome é Bruna, hoje eu vou falar um pouco sobre o teorema do Pitágoras e leis dos cossenos. Bom, a lei dos cossenos, ela, tecnicamente, é uma extensão do teorema de Pitágoras, né? Tendo em vista que o teorema de Pitágoras, ele só é válido para triângulos, que tem um ângulo reto, ou seja, um ângulo de 90 graus, A lei dos cossenos utiliza uma parte dessa ideia do teorema de Pitágoras e corrige para um triângulo que tem lados diferentes de 90 graus. Então, basicamente, a lei dos cossenos ela relaciona aos três lados dos triângulos e o cosseno de ângulos de ângulo entre dois lados. Então, a lei dos cossenos é a primeira parte oposta, igual ao segundo lado oposto, mais ao terceiro lado oposto, menos 2 vezes a multiplicação entre esses dois últimos lados vezes, o cosseno do ângulo entre eles. Então, basicamente, se você tem dois lados de um triângulo qualquer e um ângulo entre você consegue achar o terceiro lado ou então se você tiver três lados de um triângulo e quiser achar o ângulo entre qualquer um desses lados você consegue também utilizar a lei dos cossenos então como todo mundo já sabe tanto a lei dos cossenos quanto o teorema de Pitágoras eles são utilizados para encontrar a distância entre dois pontos que não podem ser medidos diretamente. Por exemplo, se eu tenho dois pontos, um em cada margem do Rio, eu consigo calcular a distância entre eles usando o teorema de Pitágoras. Enfim, existem diversas aplicações do teorema de Pitágoras, da lei dos cossenos, e basicamente ele é usado na topografia, na navegação, na arquitetura, na ciência, no geral. é uma das leis mais utilizadas na matemática. Inclusive, a lei dos cossenos e o teorema de Pitágoras são iguais quando a angulação é 90 graus e o cosseno de 90 é zero, então corta o termo de correção para o ângulo qualquer e aí a lei dos cossenos se torna o teorema de Pitágoras. Então, basicamente, a lei dos cossenos é uma versão generalizada do teorema de Pitágoras para triângulos de qualquer angulação.".

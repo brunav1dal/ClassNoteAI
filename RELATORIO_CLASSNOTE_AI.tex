@@ -48,6 +48,11 @@
 }
 \lstset{style=padrao}
 
+% Ponto de quebra de linha "invisível" (sem hífen) para caminhos de arquivo
+% longos dentro de células de tabela em \texttt, que de outra forma formam
+% uma única palavra sem espaços e estouram a largura da coluna.
+\newcommand{\pb}{\discretionary{}{}{}}
+
 \pagestyle{fancy}
 \fancyhf{}
 \rhead{ClassNote AI --- Relatório Técnico}
@@ -206,7 +211,13 @@ O sistema aceita duas formas de entrada de áudio na interface web:
 
 Em ambos os casos, o conteúdo do áudio é convertido para Base64 no navegador e enviado por \texttt{POST} em JSON para a rota \texttt{/api/process}. No backend, o conteúdo é decodificado e persistido em \texttt{audio/upload\_web\_\emph{timestamp}\_\emph{nome-original}}, que é removido do disco ao final do processamento (o áudio já convertido permanece salvo separadamente).
 
+\paragraph{O que é a decodificação em Base64.}
+Um arquivo de áudio é, no fundo, uma sequência de \emph{bytes} binários. O protocolo usado para enviar a requisição, porém, é JSON dentro de uma requisição HTTP de texto --- um formato pensado para transportar apenas caracteres de texto, e que não garante que \emph{bytes} binários arbitrários (incluindo valores que poderiam ser interpretados como caracteres de controle ou quebrar a sintaxe do JSON) cheguem intactos ao servidor. O \textbf{Base64} resolve esse problema reagrupando os \emph{bytes} originais em blocos de 6 bits e mapeando cada bloco para um entre 64 caracteres imprimíveis e seguros para texto (letras de \texttt{A} a \texttt{Z}, de \texttt{a} a \texttt{z}, dígitos de \texttt{0} a \texttt{9}, além dos símbolos \texttt{+} e \texttt{/}). O resultado é uma cadeia de caracteres comuns que pode ser inserida como uma \emph{string} normal dentro do JSON, ao custo de um aumento de aproximadamente 33\% no tamanho dos dados transmitidos (pois cada 3 \emph{bytes} originais viram 4 caracteres Base64). No ClassNote AI, o navegador faz essa codificação com \texttt{FileReader.readAsDataURL} antes de enviar o áudio; o backend (\texttt{web\_api.py}, função \texttt{salvar\_upload}) faz o caminho inverso com \texttt{base64.b64decode}, reconstruindo os \emph{bytes} binários originais do áudio antes de gravá-los em disco. É importante destacar que o Base64 é apenas uma \emph{codificação de transporte}: ele não comprime nem altera o conteúdo do áudio, apenas o torna seguro para trafegar dentro de texto.
+
 \subsection{Pré-processamento com FFmpeg}
+
+\paragraph{O que é o FFmpeg e como ele funciona.}
+O \textbf{FFmpeg} é uma ferramenta de linha de comando, de código aberto, para manipulação de áudio e vídeo: ele sabe ler (\emph{decodificar}) dezenas de formatos de arquivo diferentes (MP3, MP4, WAV, OGG, WEBM, entre outros), aplicar transformações sobre o sinal decodificado e então regravar (\emph{codificar}) o resultado em um novo formato. O ClassNote AI não usa o FFmpeg como uma biblioteca importada no código Python; em vez disso, o módulo \texttt{audio\_utils.py} localiza o executável do FFmpeg instalado no sistema e o invoca como um \emph{processo externo} (via \texttt{subprocess.run}), passando o caminho do arquivo de entrada e uma lista de parâmetros de linha de comando --- exatamente como se o comando fosse digitado manualmente em um terminal. O FFmpeg processa o arquivo internamente em três etapas encadeadas (\emph{decodificação} $\rightarrow$ \emph{filtros} $\rightarrow$ \emph{codificação}) e grava o resultado em um novo arquivo WAV no disco; o processo Python apenas aguarda o FFmpeg terminar e verifica se ele encerrou sem erro. Assim, qualquer formato de áudio ou vídeo aceito pelo FFmpeg pode ser usado como entrada do sistema, pois toda a complexidade de decodificação fica isolada nessa ferramenta externa, e o restante do \emph{pipeline} sempre recebe o mesmo formato de saída padronizado.
 
 O áudio recebido --- em qualquer formato suportado pelo FFmpeg --- é convertido para um WAV padronizado antes de qualquer outra etapa:
 
@@ -231,6 +242,17 @@ Caso o FFmpeg não seja localizado no sistema, o \emph{pipeline} ainda aceita di
 \subsection{Transcrição de voz}
 
 A transcrição é feita localmente com a biblioteca \textbf{faster-whisper} (reimplementação do Whisper sobre o \emph{runtime} \texttt{CTranslate2}, otimizada para inferência em CPU). O modelo é carregado uma única vez por processo (padrão \emph{singleton} protegido por \texttt{threading.Lock}) e reaproveitado entre requisições subsequentes, evitando o custo de recarregar os pesos a cada áudio.
+
+\paragraph{Como o Whisper funciona, de forma simplificada.}
+O \textbf{Whisper} é uma rede neural (arquitetura \emph{Transformer}, do tipo \emph{encoder-decoder}) treinada pela OpenAI para converter áudio de fala em texto. De forma resumida, o processo de transcrição segue três etapas:
+
+\begin{enumerate}
+    \item \textbf{Do áudio a uma ``imagem'' do som}: o sinal de áudio é dividido em janelas curtas e convertido em um \emph{espectrograma de mel} --- uma representação em forma de matriz que mostra, ao longo do tempo, a intensidade de diferentes faixas de frequência, de um jeito próximo de como o ouvido humano percebe o som. É essa representação, e não o áudio bruto, que alimenta a rede neural.
+    \item \textbf{Codificação (\emph{encoder})}: uma parte da rede neural lê o espectrograma inteiro e produz uma representação numérica interna (vetores de características) que resume o conteúdo acústico do trecho de áudio.
+    \item \textbf{Decodificação (\emph{decoder})}: outra parte da rede neural usa essa representação para prever, um pedaço de palavra (\emph{token}) de cada vez, qual é o texto mais provável correspondente àquele áudio --- de forma parecida com um modelo de linguagem que ``completa a frase'', mas condicionado ao som ouvido. Esses \emph{tokens} previstos são então concatenados para formar o texto final da transcrição.
+\end{enumerate}
+
+O \textbf{faster-whisper} usa os mesmos pesos (o mesmo conhecimento) do Whisper original, mas executa esse processo sobre o motor de inferência \texttt{CTranslate2}, escrito em C++ e otimizado especificamente para rodar essa arquitetura de rede neural com menos uso de memória e maior velocidade --- especialmente quando combinado com \emph{quantização} (representar os pesos da rede em números inteiros de 8 bits, em vez de números de ponto flutuante de 32 bits, trocando uma pequena perda de precisão por ganho expressivo de velocidade e economia de memória), o que é o que torna viável rodar o modelo em tempo aceitável em um notebook comum, sem GPU dedicada.
 
 \begin{lstlisting}[language=Python, caption={Configuração do modelo e da chamada de transcrição (\texttt{transcricao.py}).}]
 WhisperModel(
@@ -330,7 +352,7 @@ Como otimização de tempo de parede, o cálculo da FFT e a transcrição via Wh
 A interface web (\texttt{docs/index.html}) é uma página única, sem \emph{frameworks} de frontend, que se comunica com o backend via \texttt{fetch}. Ela é organizada em cinco abas de resultado:
 
 \begin{center}
-\begin{tabular}{@{}ll@{}}
+\begin{tabular}{@{}p{2.6cm}p{11.5cm}@{}}
 \toprule
 \textbf{Aba} & \textbf{Conteúdo} \\
 \midrule
@@ -365,23 +387,26 @@ Além das abas equivalentes às da interface web (Sinal, FFT, Termos-chave, Tran
 \section{Convenções de persistência e nomenclatura}
 % ============================================================
 
-O sistema não utiliza banco de dados: todas as entradas e saídas do \emph{pipeline} são arquivos em disco, organizados em duas pastas na raiz do projeto (\texttt{audio/} e \texttt{resultados/}), com nomes padronizados por \emph{timestamp} (\texttt{AAAAMMDD\_HHMMSS}) e, quando o processamento é disparado pela interface web, um sufixo adicional correspondente ao \texttt{jobId} da requisição --- o que permite identificar de forma inequívoca a qual processamento cada arquivo de saída pertence, mesmo com múltiplas requisições concorrentes.
+O sistema não utiliza banco de dados: todas as entradas e saídas do \emph{pipeline} são \textbf{arquivos em disco}, organizados em duas pastas na raiz do projeto (\texttt{audio/} e \texttt{resultados/}), com nomes padronizados por \emph{timestamp} (\texttt{AAAAMMDD\_HHMMSS}) e, quando o processamento é disparado pela interface web, um sufixo adicional correspondente ao \texttt{jobId} da requisição --- o que permite identificar de forma inequívoca a qual processamento cada arquivo de saída pertence, mesmo com múltiplas requisições concorrentes.
 
-\begin{longtable}{@{}p{6.4cm}p{7.6cm}@{}}
+\paragraph{O que significa ``arquivos em disco'' aqui.}
+Persistir dados ``em disco'' significa gravá-los diretamente como arquivos comuns do sistema operacional (o mesmo tipo de arquivo que aparece no Explorador de Arquivos do Windows), usando o sistema de arquivos do disco de armazenamento do computador, em vez de armazená-los dentro de um sistema de banco de dados (como PostgreSQL, MySQL ou SQLite), que organiza os dados em tabelas/registros e oferece recursos como consultas estruturadas, índices e controle de acesso concorrente. No ClassNote AI, cada etapa do \emph{pipeline} simplesmente escreve o seu resultado (texto, imagem ou áudio) em um novo arquivo, com \texttt{Path.write\_text}/\texttt{Path.write\_bytes} ou funções equivalentes do Python, dentro das pastas \texttt{audio/} e \texttt{resultados/} do próprio projeto. A ``consulta'' a esses dados --- por exemplo, para saber qual foi a transcrição mais recente --- é feita de forma simples, listando os arquivos de uma pasta e comparando nomes/datas de modificação (função \texttt{arquivo\_mais\_recente} em \texttt{resultados\_utils.py}), em vez de uma consulta a um banco de dados. Essa abordagem é mais simples de implementar e não exige nenhum serviço adicional instalado, mas tem limitações discutidas na Seção~\ref{sec:limitacoes} (por exemplo, dificuldade de fazer buscas mais ricas ou de limpar os dados automaticamente).
+
+\begin{longtable}{@{}p{6.8cm}p{7.4cm}@{}}
 \toprule
 \textbf{Padrão de nome} & \textbf{Conteúdo} \\
 \midrule
 \endhead
-\texttt{audio/upload\_web\_\emph{timestamp}\_\emph{nome-original}} & Áudio bruto recebido pelo backend web (removido após o processamento). \\
-\texttt{audio/gravacao\_\emph{timestamp}.\emph{ext}} & Nome atribuído no navegador a um áudio gravado ao vivo, antes do envio. \\
-\texttt{audio/aula\_\emph{jobId}.wav} (ou \texttt{aula.wav}) & Áudio já convertido pelo FFmpeg (mono, 16\,kHz, 16 bits), usado por todas as etapas seguintes. \\
-\texttt{resultados/transcricao\_\emph{sufixo}\_\emph{timestamp}.txt} & Transcrição bruta produzida pelo Whisper. \\
-\texttt{resultados/transcricao\_corrigida\_\emph{sufixo}\_\emph{timestamp}.txt} & Transcrição após correção pela IA (ou ajuste básico de pontuação). \\
-\texttt{resultados/palavras\_chave\_\emph{sufixo}\_\emph{timestamp}.txt} & Lista dos termos-chave mais frequentes. \\
-\texttt{resultados/grafico\_palavras\_\emph{sufixo}\_\emph{timestamp}.png} & Gráfico de frequência dos termos-chave. \\
-\texttt{resultados/espectro\_\emph{sufixo}\_\emph{timestamp}.png} & Gráfico do espectro de frequência (FFT). \\
-\texttt{resultados/material\_estudo\_\emph{sufixo}\_\emph{timestamp}.txt} & Material de estudo gerado pela IA. \\
-\texttt{resultados/desempenho\_\emph{sufixo}\_\emph{timestamp}.txt} / \texttt{.json} & Relatório de desempenho do processamento. \\
+{\small\texttt{audio/\pb upload\_\pb web\_\pb \emph{timestamp}\_\pb \emph{nome-original}}} & Áudio bruto recebido pelo backend web (removido após o processamento). \\
+{\small\texttt{audio/\pb gravacao\_\pb \emph{timestamp}.\emph{ext}}} & Nome atribuído no navegador a um áudio gravado ao vivo, antes do envio. \\
+{\small\texttt{audio/\pb aula\_\pb \emph{jobId}.wav}} (ou {\small\texttt{aula.wav}}) & Áudio já convertido pelo FFmpeg (mono, 16\,kHz, 16 bits), usado por todas as etapas seguintes. \\
+{\small\texttt{resultados/\pb transcricao\_\pb \emph{sufixo}\_\pb \emph{timestamp}.txt}} & Transcrição bruta produzida pelo Whisper. \\
+{\small\texttt{resultados/\pb transcricao\_\pb corrigida\_\pb \emph{sufixo}\_\pb \emph{timestamp}.txt}} & Transcrição após correção pela IA (ou ajuste básico de pontuação). \\
+{\small\texttt{resultados/\pb palavras\_\pb chave\_\pb \emph{sufixo}\_\pb \emph{timestamp}.txt}} & Lista dos termos-chave mais frequentes. \\
+{\small\texttt{resultados/\pb grafico\_\pb palavras\_\pb \emph{sufixo}\_\pb \emph{timestamp}.png}} & Gráfico de frequência dos termos-chave. \\
+{\small\texttt{resultados/\pb espectro\_\pb \emph{sufixo}\_\pb \emph{timestamp}.png}} & Gráfico do espectro de frequência (FFT). \\
+{\small\texttt{resultados/\pb material\_\pb estudo\_\pb \emph{sufixo}\_\pb \emph{timestamp}.txt}} & Material de estudo gerado pela IA. \\
+{\small\texttt{resultados/\pb desempenho\_\pb \emph{sufixo}\_\pb \emph{timestamp}.txt}} / {\small\texttt{.json}} & Relatório de desempenho do processamento. \\
 \bottomrule
 \caption{Convenção de nomenclatura dos arquivos gerados pelo sistema.}
 \label{tab:nomenclatura}
@@ -416,6 +441,7 @@ O sistema não utiliza banco de dados: todas as entradas e saídas do \emph{pipe
 
 % ============================================================
 \section{Limitações e trabalhos futuros}
+\label{sec:limitacoes}
 % ============================================================
 
 \begin{itemize}

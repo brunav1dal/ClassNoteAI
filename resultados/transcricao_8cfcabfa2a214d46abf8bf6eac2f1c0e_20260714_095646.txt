@@ -1,0 +1,16 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO
+============================================================
+
+Data: 14/07/2026
+Hora: 09:56:46
+
+Modelo Whisper: base (faster-whisper, CPU int8, 4 threads)
+Arquivo de áudio: aula_8cfcabfa2a214d46abf8bf6eac2f1c0e.wav
+Caminho: C:\Users\Bruna\Desktop\classnote-ai\audio\aula_8cfcabfa2a214d46abf8bf6eac2f1c0e.wav
+
+============================================================
+TRANSCRIÇÃO
+============================================================
+
+o pessoal bom dia hoje eu vou falar um pouco sobre o teorema do leite de cocenas. Então, a leite de cocenas ela mostrou o terrama de Pitágoras, né? O terrama de Pitágoras só pode ser usado em triângulos retângulos, ou seja, é que a gente possui algo de 90 graus, de a leite de cocenas ela funciona com qualquer triângulo, mesmo que não exista um ângulo reto. basicamente, ela relaciona os três lados de um triângulo com um coceino de um dos seus ângulos. Assim, conhecendo os dois lados de um triângulo e o ângulo entre eles, é possível achar o terceiro lado. Da mesma forma, conhecendo os três lados de lado, você consegue achar qualquer ângulo do triângulo. A lei dos coceinos é utilizada na engenharia, na arquitetura, na fotografia e permite calcular instancos que não podem ser calculadas diretamente, como a distância entre dois pontos separados por um rio ou a estrutura de uma ponte. Então, podemos dizer que a lei dos cocenos é amplia a ideia do teorema de pitágoras, funcionando como se fosse uma correção do teorema de pitágoras para angus, não retos, ou seja, triangulos que não são retangulos e permitem resolver problemas importantes usando triangulos e que é uma ferramenta muito importante na área de engenharia e de cências. Então, basicamente a lei dos vipitados, ai para não ser luz, ao quadrado, é igual a soma dos lados ao quadrado E, além dos cosinos, adiciono o termo, então fica o lado a é ao quadrado, é igual ao lado b ao quadrado mais lado c ao quadrado menos duas vezes a multiplicação entre esses dois lados, vezes o coseno entre esses dois lados.

@@ -1,0 +1,15 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+Data: 14/07/2026
+Hora: 10:25:19
+
+Arquivo analisado: transcricao_0c0956a084b04de7836dc60c3074c853_20260714_102517.txt
+Método de correção: Groq (llama-3.1-8b-instant)
+
+============================================================
+TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+"Pessoal, meu nome é Drummond, e eu vou falar um pouco sobre teorema de Pitágoras e leis cósineis. Bom, as leis cósineis é uma aplicação generalizada do teorema de Pitágoras, ou seja, o teorema de Pitágoras, ele só é válido para quando queremos calcular os lados de um triângulo que é retângulo, ou seja, que tem um ângulo reto, um ângulo de 90 graus. Já a lei do cosseno é utilizada para um triângulo qualquer, onde os ângulos são diferentes de 90 graus. A lei do cosseno é basicamente relacionada a três lados e a angulação entre esses lados, ou seja, um lado ao quadrado é igual ao segundo lado ao quadrado, mas o terceiro lado ao quadrado menos duas vezes o segundo lado vezes o terceiro lado vezes o cosseno entre esses lados, ou seja, você pode calcular o terceiro lado de um triângulo já tendo acesso, já tendo armazenado, dois desses lados e o ângulo entre eles. Assim também, como você pode calcular o ângulo entre dois lados quando você tem os três lados desse triângulo. Eu tenho conhecimentos de todo mundo que, tanto eu teorei uma de Pitágoras com senos, Tem aplicações em diversas áreas, como em realidade, topografia, navegação, arquitetura. Essas leis são utilizadas para quando queremos calcular a distância entre dois pontos que não podemos calcular diretamente. A distância entre dois pontos usamos longo das margens do rio, um lado é um ponto e outro é outro. Então como a gente não consegue calcular esses pontos, nós usamos o teorema de Pitágoras. Logo, o teorema de Pitágoras é uma lei de Pitágoras, com uma extensão, com uma generalização para ângulos que não sejam retos, ou seja, a lei do cosseno, por exemplo, ela também é válida para quando cosseno do ângulo é 90. E aí a gente consegue cancelar o teorema de Pitágoras porque o cosseno de 90 é igual a zero, então a lei do cosseno se torna o teorema de Pitágoras.".

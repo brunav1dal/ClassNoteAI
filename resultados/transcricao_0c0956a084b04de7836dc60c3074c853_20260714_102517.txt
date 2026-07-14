@@ -1,0 +1,16 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO
+============================================================
+
+Data: 14/07/2026
+Hora: 10:25:17
+
+Modelo Whisper: base (faster-whisper, CPU int8, 4 threads)
+Arquivo de áudio: aula_0c0956a084b04de7836dc60c3074c853.wav
+Caminho: C:\Users\Bruna\Desktop\classnote-ai\audio\aula_0c0956a084b04de7836dc60c3074c853.wav
+
+============================================================
+TRANSCRIÇÃO
+============================================================
+
+pessoal, meu nome é Drummond, e eu vou falar um pouco sobre teorema de pitágoras e leitos cocenas. Bom, a leitos cocenas é uma aplicação generalizada do teorema de pitágoras, ou seja, o teorema de pitágoras, ele só é válido para quando queremos calcular os lados de um triângulo que é retângulo, ou seja, que tem um ângulo reto, um ângulo de 90 graus. Já a lei dos cocenos é utilizada para um trego no qualquer, onde os anglusões diferentes de 90 graus. A lei dos cocenos é basicamente relacionados a três lados e a angulação entre esses lados, ou seja, Um lado ao quadrado é igual ao segundo lado ao quadrado, mas o terceiro lado ao quadrado menos duas vezes o segundo lado vezes o terceiro lado vezes o coaceno entre esses lados, ou seja, você pode calcular o terceiro lado de um quadrado já tendo acesso, já tendo armazenado, dois desses lados e o ângulo entre eles. Assim também, como você pode calcular o ângulo entre dois lados quando você tem os três lados desse triângulo. Eu te conhecimentos de todo mundo que, a tanto eu teorei uma de pétagoras com teletos, Tem aplicações em diversas áreas, como em realia, topografia, navegação, arquitetura. Essas leis são utilizadas para quando queremos calcular a distância entre dois pontos que não podemos calcular diretamente. A distância entre dois pontos usou longo das margens de o rio, um lado tá um ponto e outro tá outro. Então como a gente não consegue calcular esses pontos, nós usamos a terema de Pitágoras. Logo, a lei de Pitágoras é uma lei de Pitágoras, com uma extensão, com uma Oregida para ângulos que não sejam retos, ou seja, a lei de cocenas, por exemplo, ela também é válida para quando coceno do anguano 90. E aí a gente consegue cancelar o teorema de Pitágoras porque o cosseno de 90 é igual a zero, então a lei de cocela se torna a lei de Pitágoras.

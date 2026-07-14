@@ -1,0 +1,15 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+Data: 14/07/2026
+Hora: 10:02:57
+
+Arquivo analisado: transcricao_399d61023ac14f14b240a993a7541156_20260714_100254.txt
+Método de correção: Groq (llama-3.1-8b-instant)
+
+============================================================
+TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+"Pessoal, bom dia. Meu nome é Bruna. Hoje eu vou falar um pouco sobre leis cosinus e como o teorema de Pitágoras é uma aplicação da lei dos cosinus. Ou seja, especificamente o teorema de Pitágoras pode usar leis cosinus quando um dos ângulos do triângulo é reto, ou seja, ele é um triângulo retângulo. Além dos cossenos generalizados, ela pode ser usada para qualquer triângulo, com qualquer angulação. Então, o teorema de Pitágoras é especificamente para um triângulo retângulo. Então, no módulo ele relaciona os três lados de um triângulo e o cosseno de um dos seus ângulos. Então, conhecendo dois dos seus lados e um ângulo desse triângulo qualquer você consegue encontrar o terceiro lado desse triângulo. Da mesma forma, conhecendo os dois lados e um ângulo de um triângulo você consegue encontrar o terceiro lado desse triângulo. Da mesma forma, conhecendo os dois lados e os três lados de um triângulo você consegue encontrar o ângulo do triângulo, qualquer um dos três ângulos. Então, a lei dos cossenos é muito utilizada nas engenharias, na arquitetura, na topografia, e ela, por exemplo, permite, de forma aplicada, descobrir calcular distâncias que não podem ser medidas diretamente. Como, por exemplo, dois pontos separados por um rio ou a estrutura de uma ponte. Então, podemos dizer que desde a lei dos cossenos ela amplia a ideia do teorema de Pitágoras, que já é mais antigo, permite resolver problemas envolvendo qualquer tipo de triângulo e sendo uma das ferramentas mais importantes utilizadas pela exata de engenharia e ciências.".

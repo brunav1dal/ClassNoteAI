@@ -1,0 +1,47 @@
+============================================================
+CLASSNOTE AI - MATERIAL DE ESTUDO
+============================================================
+
+Data: 14/07/2026
+Hora: 09:56:53
+
+Transcrição utilizada: transcricao_corrigida_8cfcabfa2a214d46abf8bf6eac2f1c0e_20260714_095649.txt
+Quantidade de palavras no prompt: 275
+Modo utilizado: AULA
+IA utilizada: Groq (llama-3.1-8b-instant)
+
+============================================================
+MATERIAL GERADO PELA IA
+============================================================
+
+=== RESUMO
+O teorema do Leão de Pitágoras é uma extensão do teorema de Pitágoras, que relaciona os lados de um triângulo retângulo. No entanto, o Leão de Pitágoras pode ser usado em qualquer triângulo, não apenas em triângulos retângulos. Ele relaciona os três lados de um triângulo com o cosseno de um dos seus ângulos, permitindo calcular o terceiro lado conhecendo os dois lados e o ângulo entre eles, ou calcular qualquer ângulo do triângulo conhecendo os três lados.
+
+A lei dos cossenos é uma ferramenta importante na engenharia e arquitetura, permitindo calcular instâncias que não podem ser calculadas diretamente, como a distância entre dois pontos separados por um rio ou a estrutura de uma ponte.
+
+O Leão de Pitágoras é uma correção do teorema de Pitágoras para ângulos não retos, permitindo resolver problemas importantes usando triângulos.
+
+=== CONCEITOS
+- **Teorema de Pitágoras**: relaciona os lados de um triângulo retângulo, onde a soma dos quadrados dos dois lados adjacentes ao ângulo reto é igual ao quadrado do lado oposto ao ângulo reto.
+- **Leão de Pitágoras**: relaciona os três lados de um triângulo com o cosseno de um dos seus ângulos, permitindo calcular o terceiro lado conhecendo os dois lados e o ângulo entre eles, ou calcular qualquer ângulo do triângulo conhecendo os três lados.
+- **Lei dos cossenos**: a soma dos quadrados dos dois lados adjacentes ao ângulo é igual à soma dos quadrados dos outros dois lados, menos duas vezes a multiplicação entre esses dois lados, vezes o cosseno do ângulo entre eles.
+
+Exemplo prático: se você conhece os dois lados de um triângulo e o ângulo entre eles, pode usar o Leão de Pitágoras para calcular o terceiro lado.
+
+Fórmula: a² = b² + c² - 2bc * cos(ângulo)
+
+=== ATENÇÃO E PROVA
+- **Dúvidas**: o que é o Leão de Pitágoras e como ele se relaciona com o teorema de Pitágoras?
+- **Pegadinhas**: não confunda o Leão de Pitágoras com o teorema de Pitágoras, pois eles têm aplicações diferentes.
+- **Trechos confusos**: a fórmula do Leão de Pitágoras pode ser confusa, mas é importante entender que ela relaciona os três lados de um triângulo com o cosseno de um dos seus ângulos.
+- **O que é mais importante estudar para a prova**: o Leão de Pitágoras e a lei dos cossenos são ferramentas importantes na engenharia e arquitetura, então é importante entender como eles funcionam e como podem ser aplicados em problemas reais.
+
+=== FLASHCARDS
+FRENTE: O que é o Leão de Pitágoras? | VERSO: Uma extensão do teorema de Pitágoras que relaciona os três lados de um triângulo com o cosseno de um dos seus ângulos.
+FRENTE: Qual é a fórmula do Leão de Pitágoras? | VERSO: a² = b² + c² - 2bc * cos(ângulo)
+FRENTE: Qual é a aplicação do Leão de Pitágoras na engenharia? | VERSO: Permite calcular instâncias que não podem ser calculadas diretamente, como a distância entre dois pontos separados por um rio ou a estrutura de uma ponte.
+
+=== QUESTÕES
+1. Qual é a diferença entre o teorema de Pitágoras e o Leão de Pitágoras?
+2. Como o Leão de Pitágoras pode ser usado para calcular o terceiro lado de um triângulo conhecendo os dois lados e o ângulo entre eles?
+3. Qual é a importância do Leão de Pitágoras na engenharia e arquitetura?

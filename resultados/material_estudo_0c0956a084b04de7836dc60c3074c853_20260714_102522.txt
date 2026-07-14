@@ -1,0 +1,50 @@
+============================================================
+CLASSNOTE AI - MATERIAL DE ESTUDO
+============================================================
+
+Data: 14/07/2026
+Hora: 10:25:22
+
+Transcrição utilizada: transcricao_corrigida_0c0956a084b04de7836dc60c3074c853_20260714_102519.txt
+Quantidade de palavras no prompt: 328
+Modo utilizado: AULA
+IA utilizada: Groq (llama-3.1-8b-instant)
+
+============================================================
+MATERIAL GERADO PELA IA
+============================================================
+
+=== RESUMO
+O professor Drummond apresentou aulas sobre o teorema de Pitágoras e as leis cósineis. O teorema de Pitágoras é uma fórmula matemática que calcula a hipotenusa de um triângulo retângulo, enquanto as leis cósineis são uma extensão desse teorema para triângulos não retângulos. As leis cósineis permitem calcular a hipotenusa ou um dos lados de um triângulo conhecendo dois lados e o ângulo entre eles.
+
+O professor Drummond destacou que as leis cósineis têm aplicações em diversas áreas, como topografia, navegação e arquitetura, e são utilizadas para calcular a distância entre dois pontos que não podem ser calculados diretamente.
+
+O teorema de Pitágoras é uma lei de Pitágoras especializada para triângulos retângulos, enquanto as leis cósineis são uma generalização desse teorema para triângulos não retângulos.
+
+=== CONCEITOS
+- **Teorema de Pitágoras**: é uma fórmula matemática que calcula a hipotenusa de um triângulo retângulo, onde a hipotenusa ao quadrado é igual à soma dos quadrados dos outros dois lados.
+- **Leis cósineis**: são uma extensão do teorema de Pitágoras para triângulos não retângulos, onde os lados e os ângulos entre eles são utilizados para calcular a hipotenusa ou um dos lados.
+- **Lei do cosseno**: é uma das leis cósineis que calcula a hipotenusa de um triângulo conhecendo dois lados e o ângulo entre eles, onde o cosseno do ângulo é utilizado.
+- **Cosseno de 90 graus**: é igual a zero, o que permite cancelar a lei do cosseno e utilizar o teorema de Pitágoras em triângulos retângulos.
+
+Exemplo prático: se você conhece dois lados de um triângulo e o ângulo entre eles, pode utilizar a lei do cosseno para calcular a hipotenusa.
+
+Fórmula: c² = a² + b² (teorema de Pitágoras)
+ou
+c² = a² + b² - 2ab * cos(ângulo) (lei do cosseno)
+
+=== ATENÇÃO E PROVA
+- **Dúvidas**: como calcular a hipotenusa de um triângulo não retângulo?
+- **Pegadinhas**: não confunda o teorema de Pitágoras com as leis cósineis, pois elas têm aplicações diferentes.
+- **Trechos confusos**: a lei do cosseno é uma extensão do teorema de Pitágoras para triângulos não retângulos.
+- **O que é mais importante estudar para a prova**: as leis cósineis e o teorema de Pitágoras, pois eles são fundamentais para calcular a hipotenusa e os lados de triângulos.
+
+=== FLASHCARDS
+FRENTE: Qual é a fórmula do teorema de Pitágoras? | VERSO: c² = a² + b²
+FRENTE: Qual é a lei cósineis que calcula a hipotenusa de um triângulo conhecendo dois lados e o ângulo entre eles? | VERSO: Lei do cosseno
+FRENTE: Qual é o cosseno de 90 graus? | VERSO: Zero
+
+=== QUESTÕES
+1. Qual é a diferença entre o teorema de Pitágoras e as leis cósineis?
+2. Como calcular a hipotenusa de um triângulo não retângulo?
+3. Qual é a aplicação mais comum do teorema de Pitágoras em engenharia?

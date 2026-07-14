@@ -143,9 +143,10 @@ def processar(payload, job_id=None):
     with medidor.etapa("Upload - decodificação e gravação do áudio"):
         origem, nome_original = salvar_upload(payload)
     inicio_job = datetime.now().timestamp()
-    whisper_model = "base"
-    ia_provider = "groq"
+    whisper_model = "small"
+    ia_provider = payload.get("aiProvider") or "groq1"
     max_seconds = payload.get("maxSeconds")
+    nome_aula = (payload.get("lectureName") or "").strip()
 
     audio_destino = AUDIO_DIR / (f"aula_{job_id}.wav" if job_id else "aula.wav")
 
@@ -206,7 +207,7 @@ def processar(payload, job_id=None):
     publicar_resultado_parcial(job_id, audio_destino, nome_original, logs, sufixo=job_id, since=inicio_job)
 
     atualizar_job(job_id, progress=92, status="Gerando material de estudo")
-    gerar_material_estudo(sufixo=job_id, ia_provider=ia_provider, medidor=medidor)
+    gerar_material_estudo(sufixo=job_id, ia_provider=ia_provider, medidor=medidor, nome_aula=nome_aula)
     logs.append("Material de estudo gerado.")
     publicar_resultado_parcial(job_id, audio_destino, nome_original, logs, sufixo=job_id, since=inicio_job)
 

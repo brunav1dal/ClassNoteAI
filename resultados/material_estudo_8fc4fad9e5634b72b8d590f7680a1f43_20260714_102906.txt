@@ -1,0 +1,43 @@
+============================================================
+CLASSNOTE AI - MATERIAL DE ESTUDO
+============================================================
+
+Data: 14/07/2026
+Hora: 10:29:06
+
+Transcrição utilizada: transcricao_corrigida_8fc4fad9e5634b72b8d590f7680a1f43_20260714_102904.txt
+Quantidade de palavras no prompt: 194
+Modo utilizado: AULA
+IA utilizada: Groq (llama-3.1-8b-instant)
+
+============================================================
+MATERIAL GERADO PELA IA
+============================================================
+
+=== RESUMO
+A lei dos cossenos é uma extensão do teorema de Pitágoras, permitindo calcular os lados e ângulos de qualquer triângulo, não apenas os retos. Ela relaciona os três lados de um triângulo com o cosseno de um dos ângulos, tornando-a uma ferramenta importante em diversas áreas da engenharia e da ciência. Com a lei dos cossenos, é possível calcular distâncias que não podem ser medidas diretamente, como a distância entre dois pontos separados por um rio.
+
+A lei dos cossenos é uma ferramenta poderosa que amplia a ideia do teorema de Pitágoras, permitindo resolver problemas envolvendo qualquer tipo de triângulo. Ela é utilizada em diversas áreas, como engenharia, arquitetura, topografia e ciência, onde é necessária a calculação de distâncias e ângulos em triângulos não retos.
+
+A lei dos cossenos é uma ferramenta fundamental para resolver problemas envolvendo triângulos não retos, permitindo calcular os lados e ângulos de qualquer triângulo.
+
+=== CONCEITOS
+- **Teorema de Pitágoras**: relaciona os lados de um triângulo retângulo (ângulo de 90 graus) com a fórmula a² + b² = c², onde a e b são os catetos e c é a hipotenusa.
+- **Lei dos cossenos**: relaciona os lados de qualquer triângulo com o cosseno de um dos ângulos, permitindo calcular os lados e ângulos de triângulos não retos.
+- **Cosseno de um ângulo**: é a razão entre o lado oposto ao ângulo e o lado adjacente ao ângulo.
+- **Exemplo prático**: calcular a distância entre dois pontos separados por um rio, utilizando a lei dos cossenos para calcular a distância entre os dois pontos.
+
+=== ATENÇÃO E PROVA
+- **Dúvidas**: como calcular a distância entre dois pontos separados por um rio utilizando a lei dos cossenos?
+- **Pegadinhas**: não confundir a lei dos cossenos com o teorema de Pitágoras, pois a lei dos cossenos é uma extensão do teorema de Pitágoras e pode ser utilizada em triângulos não retos.
+- **O que é mais importante estudar para a prova**: a lei dos cossenos e como ela é utilizada em diversas áreas da engenharia e da ciência.
+
+=== FLASHCARDS
+FRENTE: Qual é a relação entre os lados de um triângulo retângulo? | VERSO: a² + b² = c²
+FRENTE: Qual é a ferramenta utilizada para calcular a distância entre dois pontos separados por um rio? | VERSO: Lei dos cossenos
+FRENTE: Qual é a diferença entre o teorema de Pitágoras e a lei dos cossenos? | VERSO: O teorema de Pitágoras é utilizado em triângulos retos, enquanto a lei dos cossenos é utilizada em triângulos não retos.
+
+=== QUESTÕES
+1. Descreva a relação entre os lados de um triângulo retângulo e como ela é utilizada em diversas áreas da engenharia e da ciência.
+2. Qual é a ferramenta utilizada para calcular a distância entre dois pontos separados por um rio?
+3. Descreva a diferença entre o teorema de Pitágoras e a lei dos cossenos e como ela é utilizada em triângulos não retos.

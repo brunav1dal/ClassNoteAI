@@ -24,7 +24,7 @@ def obter_threads_ideais():
 
 
 def obter_modelo(medidor=None):
-    """Carrega uma única instância do modelo base para reaproveitá-la entre áudios."""
+    """Carrega uma única instância do modelo small para reaproveitá-la entre áudios."""
     global _MODELO
     with _MODELO_LOCK:
         if _MODELO is None:
@@ -43,9 +43,9 @@ def obter_modelo(medidor=None):
                     "Instale-o com: pip install faster-whisper"
                 ) from erro
 
-            print("Carregando faster-whisper base para CPU...")
+            print("Carregando faster-whisper small para CPU...")
             _MODELO = WhisperModel(
-                "base",
+                "small",
                 # Executa exclusivamente no processador, sem exigir GPU dedicada.
                 device="cpu",
                 # Usa quantização int8: menos RAM e melhor desempenho na CPU.
@@ -103,7 +103,7 @@ def transcrever(audio_path=None, whisper_model=None, sufixo=None, progress_callb
     """Mantém a integração do projeto e salva a transcrição produzida em disco.
 
     O argumento ``whisper_model`` é ignorado intencionalmente: a aplicação usa
-    sempre o modelo ``base`` para o perfil local de CPU.
+    sempre o modelo ``small`` para o perfil local de CPU.
     """
     audio_path = Path(audio_path) if audio_path else AUDIO_PADRAO
     texto = transcrever_audio(audio_path, progress_callback=progress_callback, medidor=medidor)
@@ -122,7 +122,7 @@ def transcrever(audio_path=None, whisper_model=None, sufixo=None, progress_callb
         arquivo.write(f"Data: {agora.strftime('%d/%m/%Y')}\n")
         arquivo.write(f"Hora: {agora.strftime('%H:%M:%S')}\n\n")
         arquivo.write(
-            f"Modelo Whisper: base (faster-whisper, CPU int8, {obter_threads_ideais()} threads)\n"
+            f"Modelo Whisper: small (faster-whisper, CPU int8, {obter_threads_ideais()} threads)\n"
         )
         arquivo.write(f"Arquivo de áudio: {audio_path.name}\n")
         arquivo.write(f"Caminho: {audio_path}\n\n")

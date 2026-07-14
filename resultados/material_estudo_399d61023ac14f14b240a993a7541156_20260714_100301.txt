@@ -1,0 +1,65 @@
+============================================================
+CLASSNOTE AI - MATERIAL DE ESTUDO
+============================================================
+
+Data: 14/07/2026
+Hora: 10:03:01
+
+Transcrição utilizada: transcricao_corrigida_399d61023ac14f14b240a993a7541156_20260714_100257.txt
+Quantidade de palavras no prompt: 256
+Modo utilizado: AULA
+IA utilizada: Groq (llama-3.1-8b-instant)
+
+============================================================
+MATERIAL GERADO PELA IA
+============================================================
+
+=== RESUMO
+A aula de hoje foi sobre a lei dos cossenos e sua aplicação no teorema de Pitágoras. A professora Bruna explicou que o teorema de Pitágoras é uma aplicação da lei dos cossenos quando um dos ângulos do triângulo é reto, ou seja, é um triângulo retângulo. Além disso, a lei dos cossenos pode ser usada para qualquer triângulo, independentemente da angulação. A professora também destacou que a lei dos cossenos é muito utilizada nas engenharias, na arquitetura e na topografia, e permite calcular distâncias que não podem ser medidas diretamente.
+
+A lei dos cossenos é uma ferramenta importante para resolver problemas envolvendo triângulos e é uma ampliação da ideia do teorema de Pitágoras. Ela permite encontrar o terceiro lado de um triângulo conhecendo dois dos seus lados e um ângulo, ou encontrar o ângulo de um triângulo conhecendo os dois lados e os três ângulos.
+
+A professora Bruna também destacou que a lei dos cossenos é uma das ferramentas mais importantes utilizadas pela exata de engenharia e ciências.
+
+=== CONCEITOS
+- **Lei dos cossenos**: é uma fórmula matemática que relaciona os três lados de um triângulo e o cosseno de um dos seus ângulos.
+- **Teorema de Pitágoras**: é uma aplicação da lei dos cossenos quando um dos ângulos do triângulo é reto, ou seja, é um triângulo retângulo.
+- **Cosseno de um ângulo**: é a razão entre a hipotenusa e o lado oposto ao ângulo.
+- **Hipotenusa**: é o lado oposto ao ângulo reto em um triângulo retângulo.
+- **Lado oposto**: é o lado que está em frente ao ângulo em um triângulo.
+
+Exemplo prático: Se você conhece dois lados de um triângulo e um ângulo, pode usar a lei dos cossenos para encontrar o terceiro lado.
+
+Fórmula: c² = a² + b² - 2ab * cos(C)
+
+Onde:
+- c é o terceiro lado do triângulo
+- a e b são os dois lados conhecidos
+- C é o ângulo conhecido
+- cos(C) é o cosseno do ângulo C
+
+=== ATENÇÃO E PROVA
+- A lei dos cossenos é uma ferramenta importante para resolver problemas envolvendo triângulos.
+- A professora Bruna destacou que a lei dos cossenos é muito utilizada nas engenharias, na arquitetura e na topografia.
+- É importante lembrar que a lei dos cossenos pode ser usada para qualquer triângulo, independentemente da angulação.
+
+Pegadinhas:
+- Não confunda a lei dos cossenos com o teorema de Pitágoras.
+- Lembre-se de que a lei dos cossenos pode ser usada para encontrar o terceiro lado de um triângulo conhecendo dois dos seus lados e um ângulo.
+
+O que é mais importante estudar para a prova:
+- A lei dos cossenos e sua aplicação no teorema de Pitágoras.
+- A fórmula da lei dos cossenos e como usá-la para resolver problemas envolvendo triângulos.
+
+=== FLASHCARDS
+FRENTE: O que é a lei dos cossenos? | VERSO: É uma fórmula matemática que relaciona os três lados de um triângulo e o cosseno de um dos seus ângulos.
+FRENTE: Qual é a aplicação da lei dos cossenos no teorema de Pitágoras? | VERSO: É uma aplicação da lei dos cossenos quando um dos ângulos do triângulo é reto, ou seja, é um triângulo retângulo.
+FRENTE: Qual é a fórmula da lei dos cossenos? | VERSO: c² = a² + b² - 2ab * cos(C)
+
+=== QUESTÕES
+1. Qual é a aplicação da lei dos cossenos no teorema de Pitágoras?
+Resposta: É uma aplicação da lei dos cossenos quando um dos ângulos do triângulo é reto, ou seja, é um triângulo retângulo.
+2. Qual é a fórmula da lei dos cossenos?
+Resposta: c² = a² + b² - 2ab * cos(C)
+3. Qual é a importância da lei dos cossenos nas engenharias, na arquitetura e na topografia?
+Resposta: A lei dos cossenos permite calcular distâncias que não podem ser medidas diretamente.

@@ -179,7 +179,7 @@
 
     .control-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr;
+      grid-template-columns: 2fr 2fr 1fr 1fr;
       gap: 12px;
       align-items: end;
     }
@@ -609,24 +609,20 @@
           <input id="fileInput" type="file" accept="audio/*,video/*">
         </label>
         <label>
+          Nome da aula
+          <input id="lectureNameInput" type="text" placeholder="ex: Cálculo 1 - Integrais">
+        </label>
+        <label>
           Whisper
           <select id="whisperSelect">
-            <option value="base">CPU otimizada - base (int8)</option>
+            <option value="small">CPU otimizada - small (int8)</option>
           </select>
         </label>
         <label>
           IA
           <select id="aiSelect">
-            <option value="groq">Groq API</option>
-          </select>
-        </label>
-        <label>
-          Duração
-          <select id="durationSelect">
-            <option value="">Completa</option>
-            <option value="180">Teste 3 min</option>
-            <option value="300">Teste 5 min</option>
-            <option value="600">Teste 10 min</option>
+            <option value="groq1">Groq 1</option>
+            <option value="groq2">Groq 2</option>
           </select>
         </label>
       </div>
@@ -688,7 +684,7 @@
     const fileInput = document.querySelector("#fileInput");
     const whisperSelect = document.querySelector("#whisperSelect");
     const aiSelect = document.querySelector("#aiSelect");
-    const durationSelect = document.querySelector("#durationSelect");
+    const lectureNameInput = document.querySelector("#lectureNameInput");
     const processButton = document.querySelector("#processButton");
     const latestButton = document.querySelector("#latestButton");
     const statusText = document.querySelector("#statusText");
@@ -1431,7 +1427,7 @@
             contentBase64,
             whisperModel: whisperSelect.value,
             aiProvider: aiSelect.value,
-            maxSeconds: durationSelect.value ? Number(durationSelect.value) : null
+            lectureName: lectureNameInput.value.trim()
           })
         });
 

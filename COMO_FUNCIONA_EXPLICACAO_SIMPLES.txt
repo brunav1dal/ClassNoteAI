@@ -1,0 +1,205 @@
+CLASSNOTE AI — COMO O PROGRAMA FUNCIONA (EXPLICAÇÃO SIMPLES)
+================================================================
+Guia rápido para responder "como que funciona esse programa?"
+
+
+RESPOSTA CURTA (30 segundos)
+--------------------------------------------------------------
+"O ClassNote AI pega o áudio de uma aula — gravado na hora pelo
+navegador ou um arquivo já existente — e devolve quatro coisas
+prontas: a transcrição da fala, um gráfico da frequência do áudio,
+os termos mais importantes que foram ditos, e um material de
+estudo com resumo, conceitos e flashcards. Tudo isso acontece
+automaticamente, em etapas: primeiro o áudio é padronizado, depois
+uma inteligência artificial local (o Whisper) transcreve a fala,
+e por fim outra IA (a Groq, por API) corrige o texto e gera o
+material de estudo."
+
+
+O CAMINHO QUE O ÁUDIO PERCORRE, PASSO A PASSO
+--------------------------------------------------------------
+
+1) O aluno grava ou envia o áudio
+   Na tela, dá pra escolher um arquivo já gravado ou clicar em
+   "Gravar áudio agora" e falar direto pelo microfone do
+   computador. De um jeito ou de outro, esse áudio vai para o
+   programa.
+
+2) O áudio é "arrumado" antes de qualquer análise
+   Áudios gravados em situações diferentes vêm em formatos e
+   qualidades diferentes (arquivo de vídeo, volume baixo, ruído,
+   etc). Uma ferramenta chamada FFmpeg abre esse arquivo original
+   (isso se chama "decodificar": ler um formato compactado e
+   transformar de volta numa onda de som simples que dá pra
+   manipular) e converte tudo para um único padrão: um som só de
+   voz, sem silêncio nem barulho sobrando, num formato de áudio
+   bem simples (WAV, sem compactação — chamado de PCM), numa
+   qualidade que a IA de transcrição entende bem e processa rápido.
+   É como transcrever uma fita cassete: antes de ouvir, você limpa
+   o chiado e ajusta o volume.
+
+3) A fala vira texto (transcrição)
+   Um modelo de inteligência artificial chamado Whisper "ouve"
+   o áudio e escreve o que foi dito, em português. Esse modelo
+   roda no próprio computador (não precisa de internet nem de
+   placa de vídeo cara) — ele já vem "treinado" para reconhecer
+   fala, meio que um ouvido artificial. Ao mesmo tempo, em
+   paralelo, o programa também calcula um gráfico mostrando quais
+   frequências de som mais apareceram na fala (a "FFT", uma forma
+   de enxergar o som como um gráfico em vez de só ouvir).
+
+4) O texto é revisado por uma segunda IA
+   A transcrição bruta do Whisper sai com alguns erros de
+   ortografia e sem pontuação direito (comum em qualquer
+   transcrição automática). Então o texto é enviado para outra
+   inteligência artificial, a Groq (que roda em um serviço na
+   internet, tipo o ChatGPT), com instruções bem específicas:
+   só corrigir erros óbvios, sem inventar nem resumir nada.
+
+5) O programa identifica as palavras mais importantes
+   Sobre o texto já corrigido, o programa conta quais palavras
+   mais se repetem, ignorando palavras sem muito significado
+   (tipo "que", "para", "então"). O resultado é uma lista dos
+   termos mais falados na aula, com um gráfico de barras.
+
+6) A IA gera o material de estudo
+   Por fim, a Groq é usada de novo, mas agora com outra tarefa:
+   ler a transcrição corrigida inteira e produzir um resumo da
+   aula, os conceitos principais, pontos de atenção para a prova,
+   flashcards (pergunta e resposta) e algumas questões de revisão.
+
+7) Tudo aparece na tela, organizado em abas
+   O aluno vê o resultado em abas: Sinal (dados técnicos do
+   áudio), FFT (gráfico de frequência), Termos-chave, Transcrição
+   e Material de estudo — esse último dá até pra exportar em PDF.
+
+
+POR QUE O PROGRAMA FUNCIONA EM ETAPAS SEPARADAS?
+--------------------------------------------------------------
+Cada etapa faz uma coisa só e passa o resultado adiante (áudio
+limpo -> texto -> texto corrigido -> termos e material). Isso
+deixa mais fácil de entender, de testar cada parte sozinha, e
+permite fazer duas coisas ao mesmo tempo quando elas não dependem
+uma da outra (por exemplo, o gráfico de frequência e a transcrição
+rodam em paralelo, o que deixa o processo mais rápido).
+
+
+PERGUNTAS QUE O PROFESSOR PODE FAZER (E RESPOSTAS PRONTAS)
+--------------------------------------------------------------
+
+P: "Por que vocês usam duas inteligências artificiais diferentes?"
+R: O Whisper faz só uma coisa muito bem: transformar áudio em
+   texto, e roda localmente no computador, de graça, sem depender
+   de internet. A Groq é um modelo de linguagem (parecido com o
+   ChatGPT) usado só depois, para corrigir o texto e escrever o
+   material de estudo — tarefas de "entender e escrever", que são
+   o forte desse tipo de IA. São ferramentas diferentes para
+   problemas diferentes.
+
+P: "O programa precisa de internet?"
+R: Só para as duas etapas que usam a Groq (correção do texto e
+   geração do material de estudo). Gravar o áudio, limpar o som e
+   transcrever a fala funcionam totalmente offline.
+
+P: "Por que transformar o áudio em WAV mono 16kHz antes de
+    transcrever?"
+R: Porque é exatamente o formato que o Whisper espera internamente.
+   Mandar o áudio já nesse formato evita que o próprio modelo
+   precise converter na hora, o que deixa a transcrição mais
+   rápida.
+
+P: "O que é essa 'decodificação' que o FFmpeg faz?"
+R: Um arquivo de áudio (MP3, MP4, WEBM etc.) normalmente vem
+   compactado, para ocupar menos espaço — parecido com um ZIP,
+   mas feito especificamente para som. "Decodificar" é o processo
+   de abrir esse arquivo compactado e reconstruir a onda de som
+   original a partir dele, para então poder aplicar filtros e
+   analisar o áudio. O FFmpeg sabe decodificar dezenas de formatos
+   diferentes; depois de decodificado, o áudio já vira uma
+   sequência de números que representam a onda sonora.
+
+P: "O que é PCM? Por que o WAV usa isso?"
+R: PCM (Pulse Code Modulation, "modulação por código de pulsos")
+   é a forma mais direta e simples de guardar som digital: em vez
+   de comprimir a informação, ele simplesmente anota, várias vezes
+   por segundo, qual é a altura da onda sonora naquele instante —
+   como se fosse uma lista bem longa de números. O formato WAV
+   usado no programa guarda o áudio em PCM, ou seja, sem nenhuma
+   compressão: é o formato "cru", mais fácil e rápido de qualquer
+   programa ler, sem precisar descompactar nada antes de analisar
+   ou transcrever. A troca é: o arquivo PCM ocupa mais espaço em
+   disco do que um MP3, por exemplo, mas processa mais rápido.
+
+P: "Por que exatamente mono, 16 kHz e 16 bits, e não outros
+    valores?"
+R: Esses três números descrevem como o som foi digitalizado:
+     - Mono (1 canal, em vez de estéreo/2 canais): a fala não
+       precisa de som "em volta", então um canal só já basta e
+       reduz pela metade a quantidade de dados.
+     - 16 kHz (a "taxa de amostragem"): é quantas vezes por
+       segundo o som foi medido. 16 mil vezes por segundo é
+       suficiente para capturar bem a voz humana (que usa
+       frequências bem mais baixas que isso) — é literalmente o
+       valor que o Whisper foi treinado para receber, então usar
+       outro valor obrigaria o próprio Whisper a converter de
+       novo, perdendo tempo.
+     - 16 bits (a "profundidade"): é a precisão de cada medição
+       de volume. 16 bits já dá uma qualidade mais que suficiente
+       para reconhecer fala.
+   Ou seja: não é um valor aleatório, é o "tamanho de arquivo
+   mínimo com qualidade suficiente" para transcrever bem e rápido.
+
+P: "O que fazem os filtros 'silenceremove' e 'loudnorm' que
+    aparecem no comando do FFmpeg?"
+R: São dois ajustes aplicados durante a conversão, antes de
+   transcrever:
+     - silenceremove corta os trechos de silêncio (no começo e
+       entre falas), então o Whisper não perde tempo "ouvindo"
+       partes sem ninguém falando.
+     - loudnorm normaliza o volume, deixando-o num nível padrão
+       (nem baixo demais, nem estourado), porque um áudio gravado
+       longe do microfone ou com o volume errado atrapalha a
+       transcrição.
+   Os dois juntos deixam o áudio "mais fácil de ouvir" para a IA,
+   do mesmo jeito que ajudaria um humano a entender melhor.
+
+P: "O FFmpeg é uma biblioteca importada no código Python?"
+R: Não. O FFmpeg é um programa separado, instalado no computador
+   (o mesmo tipo de programa que você abriria digitando um comando
+   no terminal). O código Python só chama esse programa por fora
+   — como se apertasse um botão dizendo "converta esse arquivo com
+   essas configurações" — e espera ele terminar. Se o FFmpeg não
+   estiver instalado, o programa avisa com uma mensagem de erro em
+   vez de travar sem explicação.
+
+P: "O que é essa FFT / esse gráfico de frequência?"
+R: É uma forma de olhar para o som não como uma onda no tempo
+   (que sobe e desce), mas como uma lista de quais frequências
+   (graves, agudos) apareceram mais forte. É a mesma matemática
+   usada em equalizadores de som.
+
+P: "Onde os dados ficam guardados?"
+R: Em arquivos simples nas pastas do próprio projeto (uma pasta
+   para os áudios, outra para os resultados), sem usar um banco
+   de dados. Cada arquivo tem no nome a data/hora em que foi
+   gerado, para não se confundir com processamentos antigos.
+
+P: "O que acontece se a IA (Groq) falhar ou não tiver internet?"
+R: O programa não trava: ele usa uma correção mais simples e
+   automática (só ajusta maiúscula no início e ponto final), então
+   sempre entrega pelo menos a transcrição, mesmo sem IA externa
+   disponível.
+
+P: "Dá para usar em celular ou só no computador?"
+R: A interface é uma página web comum, então abre em qualquer
+   navegador; a gravação ao vivo usa o microfone do próprio
+   aparelho. O processamento pesado (Whisper, FFmpeg) roda no
+   computador que está servindo a aplicação, não no aparelho do
+   usuário.
+
+P: "Isso é 'inteligência artificial de verdade' ou só um script?"
+R: As duas partes de IA são modelos reais e prontos (o Whisper,
+   da OpenAI, e o modelo da Groq, um LLM tipo os usados em
+   chatbots) — o programa não treina nenhum modelo do zero, ele
+   organiza e conecta esses modelos prontos em um fluxo automático
+   (esse fluxo organizado é chamado de "pipeline").

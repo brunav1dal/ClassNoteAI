@@ -1,0 +1,16 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO
+============================================================
+
+Data: 14/07/2026
+Hora: 10:02:54
+
+Modelo Whisper: base (faster-whisper, CPU int8, 4 threads)
+Arquivo de áudio: aula_399d61023ac14f14b240a993a7541156.wav
+Caminho: C:\Users\Bruna\Desktop\classnote-ai\audio\aula_399d61023ac14f14b240a993a7541156.wav
+
+============================================================
+TRANSCRIÇÃO
+============================================================
+
+pessoal bom dia, meu nome é Bruna, hoje eu vou falar um pouco sobre leitos cossenos e como o teorema de pitágoras é uma aplicação da leida de cossenos, ou seja, especificamente o teorema de pitágoras pode usar leitos cossenos quando um dos angos do triângulo é reto, ou Ou seja, ele é um trângulo retângulo. Além dos cosses generalizados, ela pode ser usada para qualquer trângulo, com qualquer angulação. Então, o teorema de pitágula é especificamente para um trângulo retângulo. Então, no marcha ele relaciona os três lados de um triângulo e o coseno de um dos seus ângulos. Então, conhecendo dois dos seus lados e um ângulo desse triângulo qualquer você consegue encontrar o terceiro lado desse triângulo. Da mesma forma, conhecendo os dois lados e os três lados de um triângulo você consegue encontrar o ângulo do triângulo, qualquer um dos três anos. Então, a lei dos cossenos é muito utilizada nas engenharias, na arquitetura, na topografia, e ela, por exemplo, permite, de forma aplicada, descobrir calcular distâncias que não podem ser medidas diretamente. como, por exemplo, dois pontos separados por o rio ou a estrutura de uma ponte. Então, podemos dizer que desde os cúrsenos ela amplia a ideia do teorema de pitágouros, que já é mais antigo, permite resolver problemas envolvendo qualquer tipo de triângol e sendo uma das ferramentas mais importantes utilizadas pela exára de engenharia e ciências.

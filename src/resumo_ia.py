@@ -14,13 +14,29 @@ RESULTADOS_DIR = BASE_DIR / "resultados"
 carregar_env()
 
 
-def montar_prompt(texto, num_palavras):
+def montar_contexto_aula(nome_aula):
+    nome_aula = (nome_aula or "").strip()
+    if not nome_aula:
+        return ""
+
+    return (
+        f'Nome/assunto da aula informado pelo usuário: "{nome_aula}"\n'
+        "Use esse nome como contexto principal para interpretar a transcrição: prefira leituras, "
+        "termos e conceitos compatíveis com esse assunto quando a transcrição estiver ambígua ou "
+        "tiver ruído de transcrição, mas NUNCA invente conteúdo que não esteja na transcrição só "
+        "para encaixar no assunto informado.\n"
+    )
+
+
+def montar_prompt(texto, num_palavras, nome_aula=None):
+    contexto_aula = montar_contexto_aula(nome_aula)
+
     if num_palavras < 50:
         return (
             "CURTO",
             f"""
 Revise e interprete o texto abaixo em português brasileiro.
-
+{contexto_aula}
 Regras:
 - Não copie o texto literalmente, exceto se for necessário citar um termo técnico.
 - Reescreva com suas próprias palavras.
@@ -48,7 +64,7 @@ Texto:
         "AULA",
         f"""
 Você é um assistente de IA focado em gerar dados estruturados para uma interface de estudos. Use APENAS a transcrição fornecida no final para preencher o modelo.
-
+{contexto_aula}
 REGRAS OBRIGATÓRIAS:
 1. Respeite rigorosamente a estrutura de blocos separada por "===".
 2. Não adicione saudações, introduções ou conclusões (comece direto no primeiro bloco).
@@ -86,7 +102,7 @@ Transcrição:
     )
 
 
-def gerar_material(prompt, texto=None, ia_provider="groq", medidor=None):
+def gerar_material(prompt, texto=None, ia_provider=None, medidor=None):
     """Gera o material exclusivamente pela Groq."""
     try:
         return chamar_groq(
@@ -94,12 +110,13 @@ def gerar_material(prompt, texto=None, ia_provider="groq", medidor=None):
             temperature=0.1,
             medidor=medidor,
             etapa="Groq - material (resumo, questões e flashcards)",
+            ia_provider=ia_provider,
         )
     except Exception as erro:
         raise RuntimeError(f"Não foi possível gerar o material com a IA: {erro}") from erro
 
 
-def gerar_material_estudo(sufixo=None, ia_provider=None, medidor=None):
+def gerar_material_estudo(sufixo=None, ia_provider=None, medidor=None, nome_aula=None):
     padrao_corrigida = f"transcricao_corrigida_{sufixo}_*.txt" if sufixo else "transcricao_corrigida_*.txt"
     arquivo_transcricao = arquivo_mais_recente(padrao_corrigida)
 
@@ -113,7 +130,7 @@ def gerar_material_estudo(sufixo=None, ia_provider=None, medidor=None):
     conteudo = arquivo_transcricao.read_text(encoding="utf-8")
     texto = limitar_texto(extrair_corpo_transcricao(conteudo))
     num_palavras = len(texto.split())
-    modo, prompt = montar_prompt(texto, num_palavras)
+    modo, prompt = montar_prompt(texto, num_palavras, nome_aula=nome_aula)
 
     print(f"Modo {modo} ativado. Gerando material de estudo com Groq...")
     texto_gerado, provedor_usado = gerar_material(

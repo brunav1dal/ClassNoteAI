@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QHBoxLayout,
     QLabel,
+    QLineEdit,
     QMessageBox,
     QProgressBar,
     QPushButton,
@@ -51,10 +52,11 @@ class Worker(QThread):
     concluido = Signal()
     erro = Signal(str)
 
-    def __init__(self, whisper_model, ia_provider):
+    def __init__(self, whisper_model, ia_provider, nome_aula=None):
         super().__init__()
         self.whisper_model = whisper_model
         self.ia_provider = ia_provider
+        self.nome_aula = nome_aula
 
     def run(self):
         try:
@@ -101,7 +103,7 @@ class Worker(QThread):
 
             self.status.emit("Gerando material de estudo")
             self.mensagem.emit("IA: gerando material de estudo...")
-            gerar_material_estudo(ia_provider=self.ia_provider)
+            gerar_material_estudo(ia_provider=self.ia_provider, nome_aula=self.nome_aula)
             self.progresso.emit(100)
 
             self.status.emit("Processamento concluído")
@@ -139,11 +141,15 @@ class Janela(QWidget):
         self.botao_salvar = QPushButton("Salvar transcrição")
         self.botao_pdf = QPushButton("Emitir PDF")
 
+        self.campo_nome_aula = QLineEdit()
+        self.campo_nome_aula.setPlaceholderText("ex: Cálculo 1 - Integrais")
+
         self.combo_whisper = QComboBox()
-        self.combo_whisper.addItem("CPU otimizada - base (int8)", "base")
+        self.combo_whisper.addItem("CPU otimizada - small (int8)", "small")
 
         self.combo_ia = QComboBox()
-        self.combo_ia.addItem("Groq API", "groq")
+        self.combo_ia.addItem("Groq 1", "groq1")
+        self.combo_ia.addItem("Groq 2", "groq2")
 
         self.progresso = QProgressBar()
         self.progresso.setValue(0)
@@ -193,14 +199,16 @@ class Janela(QWidget):
         painel_layout = QGridLayout()
         painel_layout.addWidget(QLabel("Arquivo"), 0, 0)
         painel_layout.addWidget(self.label_arquivo, 0, 1, 1, 3)
-        painel_layout.addWidget(QLabel("Whisper"), 1, 0)
-        painel_layout.addWidget(self.combo_whisper, 1, 1)
-        painel_layout.addWidget(QLabel("IA"), 1, 2)
-        painel_layout.addWidget(self.combo_ia, 1, 3)
-        painel_layout.addWidget(self.botao_audio, 2, 0)
-        painel_layout.addWidget(self.botao_processar, 2, 1)
-        painel_layout.addWidget(self.botao_salvar, 2, 2)
-        painel_layout.addWidget(self.botao_pdf, 2, 3)
+        painel_layout.addWidget(QLabel("Nome da aula"), 1, 0)
+        painel_layout.addWidget(self.campo_nome_aula, 1, 1, 1, 3)
+        painel_layout.addWidget(QLabel("Whisper"), 2, 0)
+        painel_layout.addWidget(self.combo_whisper, 2, 1)
+        painel_layout.addWidget(QLabel("IA"), 2, 2)
+        painel_layout.addWidget(self.combo_ia, 2, 3)
+        painel_layout.addWidget(self.botao_audio, 3, 0)
+        painel_layout.addWidget(self.botao_processar, 3, 1)
+        painel_layout.addWidget(self.botao_salvar, 3, 2)
+        painel_layout.addWidget(self.botao_pdf, 3, 3)
         painel.setLayout(painel_layout)
 
         linha_status = QHBoxLayout()
@@ -348,7 +356,7 @@ O áudio será preparado automaticamente para:
 - amostra de 16 bits
 
 Dica de desempenho:
-O faster-whisper usa o modelo "base" com quantização int8, otimizado para CPU.
+O faster-whisper usa o modelo "small" com quantização int8, otimizado para CPU.
 """
         )
 
@@ -414,11 +422,12 @@ Groq API gera a correção e o material de estudo.
 
         whisper_model = self.combo_whisper.currentData()
         ia_provider = self.combo_ia.currentData()
+        nome_aula = self.campo_nome_aula.text().strip()
 
         self.log.append(
             f"Iniciando pipeline com Whisper '{whisper_model}' e IA '{ia_provider}'."
         )
-        self.worker = Worker(whisper_model, ia_provider)
+        self.worker = Worker(whisper_model, ia_provider, nome_aula=nome_aula)
         self.worker.progresso.connect(self.progresso.setValue)
         self.worker.mensagem.connect(self.log.append)
         self.worker.status.connect(self.label_status.setText)
@@ -433,6 +442,7 @@ Groq API gera a correção e o material de estudo.
             self.botao_processar,
             self.botao_salvar,
             self.botao_pdf,
+            self.campo_nome_aula,
             self.combo_whisper,
             self.combo_ia,
         ):

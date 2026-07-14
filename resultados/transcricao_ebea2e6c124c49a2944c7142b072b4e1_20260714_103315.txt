@@ -1,0 +1,16 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO
+============================================================
+
+Data: 14/07/2026
+Hora: 10:33:15
+
+Modelo Whisper: base (faster-whisper, CPU int8, 4 threads)
+Arquivo de áudio: aula_ebea2e6c124c49a2944c7142b072b4e1.wav
+Caminho: C:\Users\Bruna\Desktop\classnote-ai\audio\aula_ebea2e6c124c49a2944c7142b072b4e1.wav
+
+============================================================
+TRANSCRIÇÃO
+============================================================
+
+O pessoal, meu nome é Brona, hoje eu vou falar um pouco sobre o teorema do de Pitágoras e leitos cocentros. Bom, a lei dos cocentros, ela, tecnicamente, é uma extensão do teorema de Pitágoras, né? Tendo em vista que o teorema de Pitágoras, ele só é válido para triangos, que tem um ângulo reto, ou seja, um ângulo de 90 graus, A lei dos cossenos utiliza uma parte dessa ideia do teorema de pitáguros e corrige para um triângulo que tem lados diferentes de 90 graus. Então, basicamente, a lei dos cossenos ela relaciona aos três lados dos triângulos e o cosseno de ângulos de ângulo entre dois lados. Então, a lei dos costeinos é a primeiro lado opadrado, igual ao segundo lado opadrado, mais ao terceiro lado opadrado, menos 2 vezes a multiplicação entre esses dois últimos lados vezes, o costeno do ano entre eles. Então, basicamente, se você tem dois lados de um triângulo qualquer e um ângulo entre você consegue achar o terceiro lado ou então se você tiver três lados de um triângulo qual que é e quiser achar o ângulo entre qualquer um desses lados você consegue também utilizar leitos cossenos então como todo mundo já sabe tanto leitos cossenos quanto o terrama de pitágoras eles são utilizados para encontrar a distância entre dois pontos que não podem ser medidos diretamente. Por exemplo, se eu tenho dois pontos, um em cada margem do Rio, eu consigo calcular de que estão se entre eles usando o teorema de Pitágoras. Enfim, existem diversas aplicações do teorema de Pitágoras, de lado dos Cossenos, e basicamente ele é usado na topografia, na navegação, na arquitetura, na ciência, no geral. é uma das leis mais utilizadas na matemática. Inclusive, é leitos cocinanos e torna teoremoitipitágoras quando a angulação é 90 graus e o cocinano de 90 é zero, então corta o termo de correção para o ângulo qualquer e aí o leito cocinano se torna teoremoitipitágoras. Então, basicamente, leitos cocinanos é uma versão generalizada do teoremoitipitágoras para o triunos de como quais quer Angulações.

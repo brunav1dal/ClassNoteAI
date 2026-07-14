@@ -1,0 +1,54 @@
+============================================================
+CLASSNOTE AI - MATERIAL DE ESTUDO
+============================================================
+
+Data: 14/07/2026
+Hora: 10:33:19
+
+Transcrição utilizada: transcricao_corrigida_ebea2e6c124c49a2944c7142b072b4e1_20260714_103317.txt
+Quantidade de palavras no prompt: 354
+Modo utilizado: AULA
+IA utilizada: Groq (llama-3.1-8b-instant)
+
+============================================================
+MATERIAL GERADO PELA IA
+============================================================
+
+=== RESUMO
+O teorema de Pitágoras e a lei dos cossenos são conceitos fundamentais na geometria e na trigonometria. O teorema de Pitágoras é uma relação entre os lados de um triângulo retângulo, enquanto a lei dos cossenos é uma extensão desse teorema para triângulos de qualquer ângulo. Ambas as leis são utilizadas para encontrar a distância entre dois pontos que não podem ser medidos diretamente.
+
+A lei dos cossenos relaciona os três lados de um triângulo e o cosseno de ângulos entre dois lados. Ela é utilizada para encontrar o terceiro lado de um triângulo, dado os outros dois lados e o ângulo entre eles, ou para encontrar o ângulo entre dois lados, dado os três lados do triângulo.
+
+A lei dos cossenos e o teorema de Pitágoras são iguais quando o ângulo é 90 graus, pois o cosseno de 90 graus é zero. Isso significa que a lei dos cossenos é uma versão generalizada do teorema de Pitágoras para triângulos de qualquer ângulo.
+
+=== CONCEITOS
+- **Teorema de Pitágoras**: é uma relação entre os lados de um triângulo retângulo, que afirma que o quadrado da hipotenusa é igual à soma dos quadrados dos outros dois lados.
+- **Lei dos cossenos**: é uma extensão do teorema de Pitágoras para triângulos de qualquer ângulo, que relaciona os três lados do triângulo e o cosseno de ângulos entre dois lados.
+- **Cosseno de um ângulo**: é a razão entre a extensão de um dos lados adjacentes ao ângulo e a hipotenusa do triângulo.
+- **Triângulo retângulo**: é um triângulo com um ângulo reto, ou seja, um ângulo de 90 graus.
+
+Exemplo prático: se você tem dois pontos, um em cada margem do Rio, você pode calcular a distância entre eles usando o teorema de Pitágoras ou a lei dos cossenos.
+
+Fórmula: a² + b² = c² (teorema de Pitágoras)
+ou
+a² = b² + c² - 2bc * cos(ângulo) (lei dos cossenos)
+
+=== ATENÇÃO E PROVA
+- **Dúvidas**: o que é o teorema de Pitágoras e a lei dos cossenos?
+- **Pegadinhas**: não confunda o teorema de Pitágoras com a lei dos cossenos, pois eles são diferentes, embora sejam relacionados.
+- **Trechos confusos**: a lei dos cossenos é uma extensão do teorema de Pitágoras para triângulos de qualquer ângulo.
+- **O que é mais importante estudar**: a lei dos cossenos e o teorema de Pitágoras são fundamentais na geometria e na trigonometria, então é importante entender bem esses conceitos.
+
+=== FLASHCARDS
+FRENTE: O que é o teorema de Pitágoras? | VERSO: É uma relação entre os lados de um triângulo retângulo.
+FRENTE: Qual é a fórmula do teorema de Pitágoras? | VERSO: a² + b² = c².
+FRENTE: O que é a lei dos cossenos? | VERSO: É uma extensão do teorema de Pitágoras para triângulos de qualquer ângulo.
+FRENTE: Qual é a fórmula da lei dos cossenos? | VERSO: a² = b² + c² - 2bc * cos(ângulo).
+
+=== QUESTÕES
+1. Qual é a relação entre o teorema de Pitágoras e a lei dos cossenos?
+Resposta: A lei dos cossenos é uma extensão do teorema de Pitágoras para triângulos de qualquer ângulo.
+2. Qual é a fórmula do teorema de Pitágoras?
+Resposta: a² + b² = c².
+3. Qual é a aplicação prática do teorema de Pitágoras e da lei dos cossenos?
+Resposta: Eles são utilizados para encontrar a distância entre dois pontos que não podem ser medidos diretamente.

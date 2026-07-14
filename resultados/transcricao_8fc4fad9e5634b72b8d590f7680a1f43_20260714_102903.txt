@@ -1,0 +1,16 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO
+============================================================
+
+Data: 14/07/2026
+Hora: 10:29:03
+
+Modelo Whisper: base (faster-whisper, CPU int8, 4 threads)
+Arquivo de áudio: aula_8fc4fad9e5634b72b8d590f7680a1f43.wav
+Caminho: C:\Users\Bruna\Desktop\classnote-ai\audio\aula_8fc4fad9e5634b72b8d590f7680a1f43.wav
+
+============================================================
+TRANSCRIÇÃO
+============================================================
+
+pela pessoal meu nome é Bruna e hoje eu vou apresentar um pouco sobre a lei dos cocenas e a lei de pigtágoras. basicamente a lei dos cocenas é uma extensão do teorema de pigtágoras. o teorema de pigtágoras só pode ser usado em triângulos retos ou seja aqueles que possuem ângulos de 90 graus já A lei dos cossenos funciona em qualquer triângulo, mesmo quando não existe um ângulo reto. Ela relaciona os três lados de um triângulo com um cosseno de um dos ângulos. Assim, reconhecendo dois lados de um ângulo, é possível cacular o terceiro lado. Da mesma forma, reconhecendo os três lados também, pode-me descobrir qualquer um dos triângulos. A lei dos cossenos é muito utilizada na engenharia, na arquitetura, na papografia, na Por exemplo, ela permite calcular distâncias que não podem ser medidas diretamente como a distância entre dois pontos, separados por um rio, ou a estrutura de uma ponte. Portanto, podemos dizer que a lei dos cossenos amplia a ideia do teorema de pitágoras, permitindo resolver problemas envolvendo qualquer tipo de triângua e sendo uma das ferramentas mais importante de diversas áreas da área de engenharia ou da área de ciências.

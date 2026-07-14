@@ -1,0 +1,15 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+Data: 14/07/2026
+Hora: 09:56:49
+
+Arquivo analisado: transcricao_8cfcabfa2a214d46abf8bf6eac2f1c0e_20260714_095646.txt
+Método de correção: Groq (llama-3.1-8b-instant)
+
+============================================================
+TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+"Olá pessoal, bom dia! Hoje vou falar um pouco sobre o teorema do Leão de Pitágoras. Então, o Leão de Pitágoras mostrou o teorema de Pitágoras, né? O teorema de Pitágoras só pode ser usado em triângulos retângulos, ou seja, é que a gente possui algo com 90 graus, e o Leão de Pitágoras funciona com qualquer triângulo, mesmo que não exista um ângulo reto. Basicamente, ele relaciona os três lados de um triângulo com o cosseno de um dos seus ângulos. Assim, conhecendo os dois lados de um triângulo e o ângulo entre eles, é possível achar o terceiro lado. Da mesma forma, conhecendo os três lados de um triângulo, você consegue achar qualquer ângulo do triângulo. A lei dos cossenos é utilizada na engenharia, na arquitetura, na fotografia e permite calcular instâncias que não podem ser calculadas diretamente, como a distância entre dois pontos separados por um rio ou a estrutura de uma ponte. Então, podemos dizer que a lei dos cossenos é amplia a ideia do teorema de Pitágoras, funcionando como se fosse uma correção do teorema de Pitágoras para ângulos não retos, ou seja, triângulos que não são retângulos e permitem resolver problemas importantes usando triângulos e que é uma ferramenta muito importante na área de engenharia. Então, basicamente, a lei dos cossenos, ou seja, o lado a ao quadrado, é igual à soma dos lados ao quadrado. E, além dos cossenos, adiciono o termo, então fica: o lado a ao quadrado é igual ao lado b ao quadrado mais o lado c ao quadrado, menos duas vezes a multiplicação entre esses dois lados, vezes o cosseno entre esses dois lados.".

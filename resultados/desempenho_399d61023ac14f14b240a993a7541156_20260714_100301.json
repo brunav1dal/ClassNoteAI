@@ -1,0 +1,89 @@
+{
+  "tempo_total_segundos": 32.912,
+  "etapas": [
+    {
+      "etapa": "Paralelo - FFT + Whisper (tempo de parede)",
+      "segundos": 17.867,
+      "chamadas": 1,
+      "percentual_total": 54.3
+    },
+    {
+      "etapa": "Whisper - transcrição + VAD",
+      "segundos": 15.886,
+      "chamadas": 1,
+      "percentual_total": 48.3
+    },
+    {
+      "etapa": "FFmpeg - conversão e pré-processamento",
+      "segundos": 8.122,
+      "chamadas": 1,
+      "percentual_total": 24.7
+    },
+    {
+      "etapa": "FFT - leitura, cálculo e gráfico",
+      "segundos": 2.999,
+      "chamadas": 1,
+      "percentual_total": 9.1
+    },
+    {
+      "etapa": "Groq - material (resumo, questões e flashcards)",
+      "segundos": 2.038,
+      "chamadas": 1,
+      "percentual_total": 6.2
+    },
+    {
+      "etapa": "Whisper - preparação da inferência",
+      "segundos": 1.971,
+      "chamadas": 1,
+      "percentual_total": 6.0
+    },
+    {
+      "etapa": "Termos-chave - extração, gráfico e escrita",
+      "segundos": 1.059,
+      "chamadas": 1,
+      "percentual_total": 3.2
+    },
+    {
+      "etapa": "Groq - correção da transcrição",
+      "segundos": 1.0,
+      "chamadas": 1,
+      "percentual_total": 3.0
+    },
+    {
+      "etapa": "Upload - decodificação e gravação do áudio",
+      "segundos": 0.033,
+      "chamadas": 1,
+      "percentual_total": 0.1
+    },
+    {
+      "etapa": "Resultado - leitura e montagem da resposta",
+      "segundos": 0.005,
+      "chamadas": 1,
+      "percentual_total": 0.0
+    },
+    {
+      "etapa": "Disco - escrita da transcrição corrigida",
+      "segundos": 0.003,
+      "chamadas": 1,
+      "percentual_total": 0.0
+    },
+    {
+      "etapa": "Disco - escrita da transcrição",
+      "segundos": 0.002,
+      "chamadas": 1,
+      "percentual_total": 0.0
+    },
+    {
+      "etapa": "Disco - escrita do material de estudo",
+      "segundos": 0.002,
+      "chamadas": 1,
+      "percentual_total": 0.0
+    },
+    {
+      "etapa": "Whisper - pós-processamento do texto",
+      "segundos": 0.0,
+      "chamadas": 1,
+      "percentual_total": 0.0
+    }
+  ]
+}
