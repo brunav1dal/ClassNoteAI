@@ -1,0 +1,28 @@
+============================================================
+CLASSNOTE AI - TERMOS-CHAVE
+============================================================
+
+Data: 14/07/2026
+Hora: 16:10:06
+
+Arquivo analisado: transcricao_corrigida_2af7594dd58446e291e559b38ed53de0_20260714_161006.txt
+
+Total de termos analisados: 119
+Termos únicos: 76
+
+============================================================
+TOP 12 TERMOS-CHAVE
+============================================================
+
+moedas: 6
+moeda: 5
+forma: 5
+sociais: 4
+energia: 4
+solar: 3
+comunidade: 3
+comunidades: 3
+banco: 3
+pessoas: 3
+pouco: 2
+mincê: 2

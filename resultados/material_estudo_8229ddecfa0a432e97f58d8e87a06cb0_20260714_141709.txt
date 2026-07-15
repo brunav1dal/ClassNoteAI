@@ -1,0 +1,43 @@
+============================================================
+CLASSNOTE AI - MATERIAL DE ESTUDO
+============================================================
+
+Data: 14/07/2026
+Hora: 14:17:09
+
+Transcrição utilizada: transcricao_corrigida_8229ddecfa0a432e97f58d8e87a06cb0_20260714_141706.txt
+Quantidade de palavras no prompt: 190
+Modo utilizado: AULA
+IA utilizada: Groq (llama-3.1-8b-instant)
+
+============================================================
+MATERIAL GERADO PELA IA
+============================================================
+
+=== RESUMO
+O Teorema de Pitágoras é uma fórmula matemática que relaciona os lados de um triângulo retângulo. Ele é usado para encontrar a hipotenusa (o lado oposto ao ângulo reto) quando se conhecem os outros dois lados. A Lei dos Cossenos é uma extensão desse teorema e pode ser usada em qualquer tipo de triângulo, não apenas em triângulos retângulos. Ela relaciona os lados e ângulos de um triângulo e é muito útil para calcular distâncias em problemas de engenharia, topografia e arquitetura.
+
+A Lei dos Cossenos permite calcular o terceiro lado de um triângulo quando se conhecem dois lados e o ângulo entre eles. Além disso, ela pode ser usada para calcular o ângulo entre os lados de um triângulo quando se conhecem os três lados. Isso torna a Lei dos Cossenos uma ferramenta muito importante na matemática.
+
+O professor mencionou que a Lei dos Cossenos é ampliada da ideia do Teorema de Pitágoras e pode ser usada em qualquer tipo de triângulo. Ele também mencionou que a Lei dos Cossenos é muito utilizada em problemas de engenharia, topografia e arquitetura.
+
+=== CONCEITOS
+- **Teorema de Pitágoras**: uma fórmula matemática que relaciona os lados de um triângulo retângulo: a² + b² = c², onde c é a hipotenusa.
+- **Lei dos Cossenos**: uma extensão do Teorema de Pitágoras que pode ser usada em qualquer tipo de triângulo: a² + b² - 2ab * cos(C) = c², onde c é o lado oposto ao ângulo C.
+- **Cosseno**: uma função trigonométrica que relaciona os lados e ângulos de um triângulo.
+- **Triângulo retângulo**: um triângulo que tem um ângulo reto (90 graus).
+
+=== ATENÇÃO E PROVA
+- **Dúvidas**: como calcular o terceiro lado de um triângulo quando se conhecem dois lados e o ângulo entre eles?
+- **Pegadinhas**: não confundir a Lei dos Cossenos com o Teorema de Pitágoras, pois a Lei dos Cossenos pode ser usada em qualquer tipo de triângulo.
+- **O que é mais importante estudar**: a Lei dos Cossenos e como aplicá-la em problemas de engenharia, topografia e arquitetura.
+
+=== FLASHCARDS
+FRENTE: Qual é a fórmula do Teorema de Pitágoras? | VERSO: a² + b² = c²
+FRENTE: Qual é a extensão do Teorema de Pitágoras? | VERSO: Lei dos Cossenos
+FRENTE: Qual é a função trigonométrica relacionada à Lei dos Cossenos? | VERSO: Cosseno
+
+=== QUESTÕES
+1. Qual é a diferença entre o Teorema de Pitágoras e a Lei dos Cossenos?
+2. Como calcular o terceiro lado de um triângulo quando se conhecem dois lados e o ângulo entre eles?
+3. Qual é a importância da Lei dos Cossenos em problemas de engenharia, topografia e arquitetura?

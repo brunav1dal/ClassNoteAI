@@ -1,0 +1,46 @@
+============================================================
+CLASSNOTE AI - MATERIAL DE ESTUDO
+============================================================
+
+Data: 14/07/2026
+Hora: 16:10:10
+
+Transcrição utilizada: transcricao_corrigida_2af7594dd58446e291e559b38ed53de0_20260714_161006.txt
+Quantidade de palavras no prompt: 255
+Modo utilizado: AULA
+IA utilizada: Groq (llama-3.1-8b-instant)
+
+============================================================
+MATERIAL GERADO PELA IA
+============================================================
+
+=== RESUMO
+A Mincê é um projeto que combina engenharia e sociedade para criar uma moeda social que funciona dentro de comunidades carentes. Essa moeda é usada para comércio e pode ser trocada por energia solar produzida por painéis solares. O projeto visa fortalecer a comunidade, promover sustentabilidade e conscientização energética, além de democratizar o acesso à energia elétrica.
+
+A Mincê é inspirada no Banco Palmas, um banco comunitário que começou em Fortaleza há cerca de 30 anos. O projeto Orquidia Solar é uma evolução dessa ideia, que agora inclui a venda de energia elétrica mais barata para as pessoas que pagam com a moeda social.
+
+A Mincê é uma forma de tornar a energia solar acessível às comunidades que menos têm recursos, incentivando a transição energética e promovendo a sustentabilidade.
+
+=== CONCEITOS
+- **Moeda social**: uma moeda alternativa que funciona dentro de uma comunidade.
+- **Comércio**: a troca de bens e serviços usando a moeda social.
+- **Energia solar**: a energia produzida por painéis solares.
+- **Cashback**: um benefício que é pago às pessoas que pagam com a moeda social.
+- **Sustentabilidade**: a capacidade de manter um sistema ou processo sem danificar o meio ambiente.
+- **Conscientização energética**: a conscientização das pessoas sobre a importância da energia solar e da sustentabilidade.
+
+=== ATENÇÃO E PROVA
+- **Dúvidas**: O que é a Mincê? Como funciona a moeda social? Como a energia solar é produzida e vendida?
+- **Pegadinhas**: A Mincê é um projeto que visa apenas a sustentabilidade, ou também inclui a conscientização energética?
+- **Trechos confusos**: A explicação sobre como a moeda social é produzida e como a energia solar é vendida pode ser confusa.
+- **O que é mais importante estudar para a prova**: A definição de moeda social, comércio, energia solar e sustentabilidade.
+
+=== FLASHCARDS
+FRENTE: O que é a Mincê? | VERSO: Um projeto que combina engenharia e sociedade para criar uma moeda social.
+FRENTE: Como funciona a moeda social? | VERSO: A moeda social é usada para comércio e pode ser trocada por energia solar.
+FRENTE: O que é cashback? | VERSO: Um benefício que é pago às pessoas que pagam com a moeda social.
+
+=== QUESTÕES
+1. Descreva o projeto Orquidia Solar e como ele funciona.
+2. Qual é o objetivo principal da Mincê?
+3. Como a Mincê visa promover a sustentabilidade e a conscientização energética?

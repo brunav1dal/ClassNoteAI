@@ -1,0 +1,16 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO
+============================================================
+
+Data: 14/07/2026
+Hora: 16:10:02
+
+Modelo Whisper: small (faster-whisper, CPU int8, 4 threads)
+Arquivo de áudio: aula_2af7594dd58446e291e559b38ed53de0.wav
+Caminho: C:\Users\Bruna\Desktop\classnote-ai\audio\aula_2af7594dd58446e291e559b38ed53de0.wav
+
+============================================================
+TRANSCRIÇÃO
+============================================================
+
+Vou falar um pouco sobre a Mincê. Mincê é relacionada mais à engenharia e à sociedade. Basicamente, a gente está trabalhando no projeto chamado Orquidia Solar, que funciona através de moedas sociais. Isso, através de moedas sociais, moedas sociais são moedas alternativas que funcionam dentro de uma comunidade que geralmente comunidades mais carentes com um pouco recurso. E essas comunidades se unem e criam uma espécie de moeda alternativa. E através dessa moeda existe o comércio que usa essas moedas e isso. E aí, essa ideia já existe, já tem alguns anos, mas quase 30 anos, começou em Fortaleza com um banco comunitário chamado Palmas, Palmas, o Banco Palmas. E essa moeda agora começou a ser usada como troca também, como lastro à energia solar. A comunidade produz, o banco comunitário produz a moeda comunitar, a energia elétrica através de painéis solares. e a energia é vendida mais barata para essas pessoas que pagam através da moeda e também tem um cashback nessas moedas sociais. Então, é uma forma de fortalecer a comunidade, uma forma de sustentabilidade também, incentiva a conscientização energética nas pessoas e é uma forma de democratizar, de tornar mais acessível a energia elétrica. E também é uma forma de a sustentabilidade chegar até essas comunidades, já que, no geral, por exemplo, um painel solar, a instalação, a obter esse tipo de tecnologia é caro. Então, é uma maneira, um modo, de as pessoas que menos têm recursos terem esse tipo de tecnologia de forma acessível, e conseguirem participar da transição energética.

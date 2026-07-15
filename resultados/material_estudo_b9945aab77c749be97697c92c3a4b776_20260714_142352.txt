@@ -1,0 +1,44 @@
+============================================================
+CLASSNOTE AI - MATERIAL DE ESTUDO
+============================================================
+
+Data: 14/07/2026
+Hora: 14:23:52
+
+Transcrição utilizada: transcricao_corrigida_b9945aab77c749be97697c92c3a4b776_20260714_142350.txt
+Quantidade de palavras no prompt: 123
+Modo utilizado: AULA
+IA utilizada: Groq (llama-3.1-8b-instant)
+
+============================================================
+MATERIAL GERADO PELA IA
+============================================================
+
+=== RESUMO
+A aula de hoje aborda a sociedade da Roma Antiga, que se estabeleceu na cidade de Roma durante o período da Antiguidade Clássica. A origem da cidade é atribuída ao mito de dois gêmeos bebês, Rômulo e Rêmo, que foram resgatados por uma loba e cresceram para fundar a cidade. A Roma era conhecida por ser uma cidade acolhedora, que aceitava pessoas de diferentes origens, incluindo ex-escravos e fugitivos.
+
+A cidade foi dividida em três períodos: o Período dos Reis, a República e o Império. Cada um desses períodos teve características únicas e contribuiu para o desenvolvimento da sociedade romana.
+
+A aula visa fornecer uma visão geral da história da Roma Antiga e entender como a cidade se desenvolveu ao longo do tempo.
+
+=== CONCEITOS
+- **Período dos Reis**: Foi o primeiro período da história da Roma Antiga, caracterizado pela monarquia. Durou aproximadamente de 753 a.C. a 509 a.C.
+- **República**: Foi o segundo período da história da Roma Antiga, caracterizado pela república. Durou aproximadamente de 509 a.C. a 27 a.C.
+- **Império**: Foi o terceiro e último período da história da Roma Antiga, caracterizado pelo império. Durou aproximadamente de 27 a.C. a 476 d.C.
+- **Rômulo e Rêmo**: Foram os dois gêmeos bebês que, segundo o mito, fundaram a cidade de Roma.
+
+=== ATENÇÃO E PROVA
+- **Dúvidas**: Qual foi a origem da cidade de Roma? Quais foram os três períodos da história da Roma Antiga?
+- **Pegadinhas**: Não há pegadinhas específicas mencionadas na transcrição.
+- **Trechos confusos**: Não há trechos confusos mencionados na transcrição.
+- **O que é mais importante estudar para a prova**: É importante entender os três períodos da história da Roma Antiga e a origem da cidade.
+
+=== FLASHCARDS
+FRENTE: Qual foi a origem da cidade de Roma? | VERSO: Segundo o mito, dois gêmeos bebês, Rômulo e Rêmo, foram resgatados por uma loba e cresceram para fundar a cidade.
+FRENTE: Quais foram os três períodos da história da Roma Antiga? | VERSO: Período dos Reis, República e Império.
+FRENTE: Quem foram os dois gêmeos bebês que fundaram a cidade de Roma? | VERSO: Rômulo e Rêmo.
+
+=== QUESTÕES
+1. Descreva a origem da cidade de Roma, segundo o mito.
+2. Qual foi o período da história da Roma Antiga que durou aproximadamente de 753 a.C. a 509 a.C.?
+3. Descreva as características principais do Império, o último período da história da Roma Antiga.

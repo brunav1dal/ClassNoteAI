@@ -1,0 +1,23 @@
+========================================================
+RELATORIO DE DESEMPENHO
+========================================================
+
+Paralelo - FFT + Whisper (tempo de parede)...........................................   88.27 s   92.2%
+Whisper - preparação da inferência...........................................   62.89 s   65.7%
+Whisper - carregamento do modelo...........................................   61.55 s   64.3%
+Whisper - transcrição + VAD...........................................   25.35 s   26.5%
+FFT - leitura, cálculo e gráfico...........................................    2.82 s    2.9%
+FFmpeg - conversão e pré-processamento...........................................    2.37 s    2.5%
+Groq - material (resumo, questões e flashcards)...........................................    1.98 s    2.1%
+Groq - extração de glossário...........................................    1.45 s    1.5%
+Groq - correção da transcrição...........................................    1.17 s    1.2%
+Termos-chave - extração, gráfico e escrita...........................................    0.33 s    0.3%
+Upload - decodificação e gravação do áudio...........................................    0.01 s    0.0%
+Resultado - leitura e montagem da resposta...........................................    0.01 s    0.0%
+Disco - escrita da transcrição corrigida...........................................    0.01 s    0.0%
+Disco - escrita da transcrição...........................................    0.00 s    0.0%
+Disco - escrita do material de estudo...........................................    0.00 s    0.0%
+Whisper - pós-processamento do texto...........................................    0.00 s    0.0%
+
+--------------------------------------------------------
+Tempo total de parede.............................   95.75 s

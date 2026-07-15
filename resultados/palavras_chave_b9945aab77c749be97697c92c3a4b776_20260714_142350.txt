@@ -1,0 +1,28 @@
+============================================================
+CLASSNOTE AI - TERMOS-CHAVE
+============================================================
+
+Data: 14/07/2026
+Hora: 14:23:50
+
+Arquivo analisado: transcricao_corrigida_b9945aab77c749be97697c92c3a4b776_20260714_142350.txt
+
+Total de termos analisados: 54
+Termos únicos: 42
+
+============================================================
+TOP 12 TERMOS-CHAVE
+============================================================
+
+roma: 4
+cidade: 4
+período: 2
+originalmente: 2
+loba: 2
+rômulo: 2
+rêmo: 2
+império: 2
+antiga: 1
+sociedade: 1
+antiguidade: 1
+clássica: 1

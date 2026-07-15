@@ -1,0 +1,7 @@
+faster-whisper
+groq
+numpy
+scipy
+matplotlib
+PySide6
+reportlab

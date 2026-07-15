@@ -1,0 +1,28 @@
+============================================================
+CLASSNOTE AI - TERMOS-CHAVE
+============================================================
+
+Data: 14/07/2026
+Hora: 14:17:06
+
+Arquivo analisado: transcricao_corrigida_8229ddecfa0a432e97f58d8e87a06cb0_20260714_141706.txt
+
+Total de termos analisados: 75
+Termos únicos: 52
+
+============================================================
+TOP 12 TERMOS-CHAVE
+============================================================
+
+triângulo: 5
+cossenos: 4
+teorema: 4
+lados: 4
+pitágoras: 3
+ângulo: 3
+dois: 3
+três: 2
+utilizada: 2
+calcular: 2
+pontos: 2
+extensão: 1

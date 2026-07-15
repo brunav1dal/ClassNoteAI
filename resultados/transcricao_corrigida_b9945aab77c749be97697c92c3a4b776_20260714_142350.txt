@@ -1,0 +1,15 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+Data: 14/07/2026
+Hora: 14:23:50
+
+Arquivo analisado: transcricao_b9945aab77c749be97697c92c3a4b776_20260714_142348.txt
+Método de correção: Groq (llama-3.1-8b-instant)
+
+============================================================
+TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+"Roma antiga foi uma sociedade do período da Antiguidade Clássica que se estabeleceu originalmente na cidade de Roma. O mito de criação é que dois gêmeos bebês foram abandonados num rio, o Tíber, e eles foram resgatados por uma loba, e aí a loba tomou conta deles e aí eles cresceram e fundaram a cidade de Roma. Os nomes dos irmãos eram Rômulo e Rêmo. Aí o Rômulo matou o Rêmo e o irmão morto deu o nome à cidade. A Roma era conhecida por ser uma cidade originalmente que aceitava qualquer tipo de gente, inclusive ex-escravos, fugitivos, por isso o Império atraiu muita gente desde o início. Ela foi dividida em três períodos, o Período dos Reis, a República e o Império.".

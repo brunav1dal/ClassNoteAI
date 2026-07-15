@@ -1,0 +1,15 @@
+============================================================
+CLASSNOTE AI - TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+Data: 14/07/2026
+Hora: 14:17:06
+
+Arquivo analisado: transcricao_8229ddecfa0a432e97f58d8e87a06cb0_20260714_141704.txt
+Método de correção: Groq (llama-3.1-8b-instant)
+
+============================================================
+TRANSCRIÇÃO CORRIGIDA
+============================================================
+
+"A lei dos cossenos é uma extensão do Teorema de Pitágoras, o Teorema de Pitágoras pode ser usado em triângulos retos, ou seja, que dispostam de 90 graus, já a lei dos cossenos funciona para qualquer tipo de triângulo, mesmo que não exista um ângulo reto. Ela relaciona três lados do triângulo e o cosseno dos seus ângulos. Encontrando dois lados de um triângulo e o ângulo entre eles, você consegue achar o terceiro lado ou se você tiver os três lados do triângulo, você consegue achar o ângulo entre os lados da mesma forma. A Lei de Cossinas é muito utilizada na Engenharia, na Topografia, na Arquitetura. Ela permite calcular distâncias que não podem ser medidas diretamente. A Lei dos Cossenos é muito utilizada, aí errei essa parte. Portanto, podemos dizer que a Lei dos Cossenos amplia a ideia do Teorema de Pitágoras, permitindo resolver problemas envolvendo qualquer tipo de triângulo e sendo uma das ferramentas mais importantes da Matemática. Por exemplo, se você quiser calcular dois pontos nas margens opostas de um rio, você consegue usar o Teorema de Britágoras para medir a distância entre esses dois pontos.".
